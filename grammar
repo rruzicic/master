@@ -1,0 +1,115 @@
+program := (declaration)* EOF;
+
+declaration :=  functionDeclaration
+			| varDeclaration
+			| statement ;
+
+functionDeclaration := "func" IDENTIFIER "(" parameterList ")" type block;
+
+varDeclaration := type IDENTIFIER "=" expression ";" ;
+
+parameterList := type IDENTIFIER ("," type IDENTIFIER)* ;
+
+block := "{" ( declaration )* "}" ;
+
+statement := expressionStatement
+			| loopStatement
+			| ifStatement
+			| returnStatement
+			| block ;
+
+expressionStatement := expression ";" ;
+
+loopStatement := "while" expression statement;
+
+ifStatement := "if" expression statement ( "else" statement )? ;
+
+returnStatement := "return" expression ";" ;
+
+expression := assignment ;
+
+assignment := IDENTIFIER "=" assignment 
+			| logicalOr;
+
+logicalOr := logicalAnd ("or" logicalAnd)*;
+
+logicalAnd := equality ("and" equality)*;
+
+equality := comparison (("==" | "!=") comparison)* ;
+
+comparison := addition (( ">" | ">=" | "<" | "<=" ) addition)
+
+addition := multiplication ( ( "-" | "+" ) multiplication )* ;
+
+multiplication := unary ( ( "/" | "*" ) unary )* ;
+
+unary := ( "!" | "-" ) unary | call ;
+
+call := primary ( "(" argumentList ")" )? ;
+
+primary := NUMBER | STRING | IDENTIFIER | "(" expression ")" | "true" | "false" ;
+
+argumentList := expression ( "," expression )* ;
+
+type := "int" | "bool" | "string" | "byte" | "float" ;
+
+/*
+Operator precedence:
+
+assignment <- LOWEST
+logicalOr
+logicalAnd
+equality
+comparison
+addition
+multiplication
+unary
+call
+primary <- HIGHEST
+
+*/
+
+/*
+Tokens:
+
+ASSIGN
+PLUS
+MINUS
+MUL
+DIV
+BANG
+LBRACKET
+RBRACKET
+LPAREN
+RPAREN
+LCURLY
+RCURLY
+SEMICOLON
+
+GT
+LT
+GTE
+LTE
+EQUAL
+NOT_EQUAL
+
+FUN
+NIL <- maybe
+IF
+ELSE
+FOR
+WHILE <- maybe
+RETURN
+AND
+OR
+TRUE
+FALSE
+STRING (keyword)
+INT
+BOOL
+BYTE
+FLOAT
+
+IDENTIFIER
+STRING
+*/
