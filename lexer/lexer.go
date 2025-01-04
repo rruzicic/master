@@ -111,9 +111,10 @@ func (l *Lexer) sstring() (string, error) {
 // TODO: implement float and rename func
 func (l *Lexer) number() token.Token {
 	var buffer bytes.Buffer
-	for isDigit(l.ch) {
-		buffer.WriteByte(l.ch)
+	buffer.WriteByte(l.ch)
+	for isDigit(l.peek()) {
 		l.advance()
+		buffer.WriteByte(l.ch)
 	}
 	return l.generateTokenWithValue(token.FLOAT, buffer.String())
 }
