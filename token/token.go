@@ -2,6 +2,8 @@ package token
 
 import "fmt"
 
+type TokenType string
+
 const (
 	PLUS      = "+"
 	MINUS     = "-"
@@ -44,13 +46,41 @@ const (
 	STRING     = "STRING"
 
 	EOF = "EOF"
+	ERR = "ERR"
 )
 
 type Token struct {
-	Type  string
-	Value string
-	Line  int
-	Col   int
+	Type     TokenType
+	Value    string
+	Line     int
+	Col      int
+	Filename string
+}
+
+var keywords = map[string]TokenType{
+	"string": STRINGT,
+	"int":    INT,
+	"bool":   BOOL,
+	"byte":   BYTE,
+	"float":  FLOAT,
+	"fun":    FUN,
+	"nil":    NIL,
+	"if":     IF,
+	"else":   ELSE,
+	"for":    FOR,
+	"while":  WHILE,
+	"return": RETURN,
+	"and":    AND,
+	"or":     OR,
+	"true":   TRUE,
+	"false":  FALSE,
+}
+
+func LookupIdent(ident string) TokenType {
+	if tok, ok := keywords[ident]; ok {
+		return tok
+	}
+	return IDENTIFIER
 }
 
 func (t Token) String() string {
