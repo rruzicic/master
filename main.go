@@ -40,6 +40,7 @@ func repl() {
 func run(input string) {
 	l := lexer.New(input)
 	tokens := l.Tokenize()
+	fmt.Println(l.HasError)
 	for _, v := range tokens {
 		fmt.Println(v)
 	}

@@ -95,7 +95,6 @@ func TestTokenize(t *testing.T) {
 
 	l := New(input)
 	tokens := l.Tokenize()
-	fmt.Println(tokens)
 
 	if len(tests) != len(tokens) {
 		t.Fatalf("wrong number of tokens. expected=%q, got=%q", len(tests), len(tokens))
@@ -109,4 +108,37 @@ func TestTokenize(t *testing.T) {
 			t.Fatalf("tests[%d] - token value wrong. expected=%q, got=%q", i, tc.expectedValue, tokens[i].Value)
 		}
 	}
+}
+
+func TestTokenizeInvalidTokens(t *testing.T) {
+	input := "шчш {} if else ELSE"
+	tests := []struct {
+		expectedType  token.TokenType
+		expectedValue string
+	}{
+		{token.ERR, ""}, // each cyrlic letter is two bytes so the lexer will output two errors for each letter
+		{token.ERR, ""},
+		{token.ERR, ""},
+		{token.ERR, ""},
+		{token.ERR, ""},
+		{token.ERR, ""},
+		{token.LCURLY, ""},
+		{token.RCURLY, ""},
+		{token.IF, ""},
+		{token.ELSE, ""},
+		{token.IDENTIFIER, "ELSE"},
+	}
+	l := New(input)
+	tokens := l.Tokenize()
+	fmt.Println(tokens)
+	for i, tc := range tests {
+		if tokens[i].Type != tc.expectedType {
+			t.Fatalf("tests[%d] - TokenType wrong. expected=%q, got=%q", i, tc.expectedType, tokens[i].Type)
+		}
+
+		if tokens[i].Value != tc.expectedValue {
+			t.Fatalf("tests[%d] - token value wrong. expected=%q, got=%q", i, tc.expectedValue, tokens[i].Value)
+		}
+	}
+
 }

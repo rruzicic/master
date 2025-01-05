@@ -84,5 +84,5 @@ func LookupIdent(ident string) TokenType {
 }
 
 func (t Token) String() string {
-	return fmt.Sprintf("Type: %s Value: '%s' Position: %d:%d", t.Type, t.Value, t.Line, t.Col)
+	return fmt.Sprintf("|Type: %s Value: '%s' Position: %d:%d|", t.Type, t.Value, t.Line, t.Col)
 }

@@ -12,6 +12,7 @@ type Lexer struct {
 	col      int
 	position int
 	ch       byte
+	HasError bool
 }
 
 func New(input string) *Lexer {
@@ -27,6 +28,7 @@ func (l *Lexer) Tokenize() []token.Token {
 			break
 		}
 		l.advance()
+		l.eatWhitespace()
 		switch l.ch {
 		case '+':
 			tokens = append(tokens, l.generateToken(token.PLUS))
@@ -81,17 +83,19 @@ func (l *Lexer) Tokenize() []token.Token {
 			} else {
 				tokens = append(tokens, l.generateTokenWithValue(token.STRING, str))
 			}
+		case 0:
+			tokens = append(tokens, l.generateToken(token.EOF))
 		default:
 			if isDigit(l.ch) {
 				tokens = append(tokens, l.number())
 			} else if isAlphaNum(l.ch) {
 				tokens = append(tokens, l.identifier())
 			} else {
-				l.eatWhitespace()
+				tokens = append(tokens, l.generateToken(token.ERR))
+				l.HasError = true
 			}
 		}
 	}
-	tokens = append(tokens, l.generateToken(token.EOF))
 	return tokens
 }
 
@@ -126,7 +130,6 @@ func (l *Lexer) identifier() token.Token {
 		l.advance()
 		buffer.WriteByte(l.ch)
 	}
-	// l.advance()
 	tok := token.LookupIdent(buffer.String())
 	if tok == token.IDENTIFIER {
 		return l.generateTokenWithValue(token.IDENTIFIER, buffer.String())
@@ -162,7 +165,11 @@ func (l *Lexer) generateToken(typez token.TokenType) token.Token {
 }
 
 func (l *Lexer) advance() {
-	l.ch = l.input[l.position]
+	if l.position >= len(l.input) {
+		l.ch = 0
+	} else {
+		l.ch = l.input[l.position]
+	}
 	l.position += 1
 	l.col += 1
 	if l.ch == '\n' {
@@ -190,10 +197,7 @@ func (l *Lexer) match(ch byte) bool {
 }
 
 func (l *Lexer) eatWhitespace() {
-	for {
-		if l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
-			break
-		}
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.advance()
 	}
 }
