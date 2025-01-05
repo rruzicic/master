@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"interpreter/token"
 	"testing"
 )
@@ -20,18 +19,13 @@ func TestTokenize(t *testing.T) {
 	} else if (b == true) {
 		string a = "asdasda";
 	}
-	
+	byte c = 0;
+	for c < a {
+		c = nil;
+	}
+	fun d(string a){return a;}
 }
 	`
-	/*
-		func a(int pera) {
-		int a[];
-		for a < 5 {
-			a = a + 1;
-		}
-		return a;
-		}
-	*/
 	tests := []struct {
 		expectedType  token.TokenType
 		expectedValue string
@@ -89,6 +83,32 @@ func TestTokenize(t *testing.T) {
 		{token.STRING, "asdasda"},
 		{token.SEMICOLON, ""},
 		{token.RCURLY, ""},
+		{token.BYTE, ""},
+		{token.IDENTIFIER, "c"},
+		{token.ASSIGN, ""},
+		{token.FLOAT, "0"},
+		{token.SEMICOLON, ""},
+		{token.FOR, ""},
+		{token.IDENTIFIER, "c"},
+		{token.LT, ""},
+		{token.IDENTIFIER, "a"},
+		{token.LCURLY, ""},
+		{token.IDENTIFIER, "c"},
+		{token.ASSIGN, ""},
+		{token.NIL, ""},
+		{token.SEMICOLON, ""},
+		{token.RCURLY, ""},
+		{token.FUN, ""},
+		{token.IDENTIFIER, "d"},
+		{token.LPAREN, ""},
+		{token.STRINGT, ""},
+		{token.IDENTIFIER, "a"},
+		{token.RPAREN, ""},
+		{token.LCURLY, ""},
+		{token.RETURN, ""},
+		{token.IDENTIFIER, "a"},
+		{token.SEMICOLON, ""},
+		{token.RCURLY, ""},
 		{token.RCURLY, ""},
 		{token.EOF, ""},
 	}
@@ -97,7 +117,7 @@ func TestTokenize(t *testing.T) {
 	tokens := l.Tokenize()
 
 	if len(tests) != len(tokens) {
-		t.Fatalf("wrong number of tokens. expected=%q, got=%q", len(tests), len(tokens))
+		t.Fatalf("wrong number of tokens. expected=%d, got=%d", len(tests), len(tokens))
 	}
 	for i, tc := range tests {
 		if tokens[i].Type != tc.expectedType {
@@ -130,7 +150,6 @@ func TestTokenizeInvalidTokens(t *testing.T) {
 	}
 	l := New(input)
 	tokens := l.Tokenize()
-	fmt.Println(tokens)
 	for i, tc := range tests {
 		if tokens[i].Type != tc.expectedType {
 			t.Fatalf("tests[%d] - TokenType wrong. expected=%q, got=%q", i, tc.expectedType, tokens[i].Type)
@@ -141,4 +160,23 @@ func TestTokenizeInvalidTokens(t *testing.T) {
 		}
 	}
 
+}
+
+func TestWhitespaceCharacters(t *testing.T) {
+	input := `
+
+	     		    
+
+
+
+	
+	`
+	l := New(input)
+	tokens := l.Tokenize()
+	if len(tokens) != 1 {
+		t.Fatalf("wrong number of tokens. expected=1, got=%d", len(tokens))
+	}
+	if tokens[0].Type != "EOF" {
+		t.Fatalf("TokenType wrong. expected=EOF, got=%q", tokens[0].Type)
+	}
 }
