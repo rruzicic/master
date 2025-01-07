@@ -74,8 +74,13 @@ func (l *Lexer) Tokenize() []token.Token {
 			} else {
 				tokens = append(tokens, l.generateToken(token.TOKEN_BANG))
 			}
-		case '/': // this could also be a comment
-			tokens = append(tokens, l.generateToken(token.TOKEN_DIV))
+		case '/':
+			if l.match('/') {
+				l.comment()
+				tokens = append(tokens, l.generateToken(token.COMMENT))
+			} else {
+				tokens = append(tokens, l.generateToken(token.TOKEN_DIV))
+			}
 		case '"':
 			str, err := l.sstring()
 			if err != nil {
@@ -135,6 +140,15 @@ func (l *Lexer) identifier() token.Token {
 	} else {
 		return l.generateToken(tok)
 	}
+}
+
+func (l *Lexer) comment() string {
+	var buffer bytes.Buffer
+	for l.peek() != '\n' {
+		l.advance()
+		buffer.WriteByte(l.ch)
+	}
+	return buffer.String()
 }
 
 func isAlphaNum(ch byte) bool {

@@ -45,6 +45,7 @@ const (
 	NUMBER     = "NUMBER"
 	IDENTIFIER = "IDENTIFIER"
 	STRING     = "STRING"
+	COMMENT    = "COMMENT"
 
 	EOF = "EOF"
 	ERR = "ERR"

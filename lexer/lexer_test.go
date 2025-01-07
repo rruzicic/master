@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"fmt"
 	"interpreter/token"
 	"testing"
 )
@@ -178,5 +179,45 @@ func TestWhitespaceCharacters(t *testing.T) {
 	}
 	if tokens[0].Type != "EOF" {
 		t.Fatalf("TokenType wrong. expected=EOF, got=%q", tokens[0].Type)
+	}
+}
+
+func TestWhitespaceComment(t *testing.T) {
+	input := `
+	int a = 42;
+	// a is the Ultimate Question of Life, the Universe, and Everything.
+	string b = "// this is NOT a comment";
+	`
+	tests := []struct {
+		expectedType  token.TokenType
+		expectedValue string
+	}{
+		{token.TOKEN_INT, ""},
+		{token.IDENTIFIER, "a"},
+		{token.TOKEN_ASSIGN, ""},
+		{token.NUMBER, "42"},
+		{token.TOKEN_SEMICOLON, ""},
+		{token.COMMENT, ""},
+		{token.TOKEN_STRING, ""},
+		{token.IDENTIFIER, "b"},
+		{token.TOKEN_ASSIGN, ""},
+		{token.STRING, "// this is NOT a comment"},
+		{token.TOKEN_SEMICOLON, ""},
+		{token.EOF, ""},
+	}
+	l := New(input)
+	tokens := l.Tokenize()
+	fmt.Println(tokens)
+	if len(tests) != len(tokens) {
+		t.Fatalf("wrong number of tokens. expected=%d, got=%d", len(tests), len(tokens))
+	}
+	for i, tc := range tests {
+		if tokens[i].Type != tc.expectedType {
+			t.Fatalf("tests[%d] - TokenType wrong. expected=%q, got=%q", i, tc.expectedType, tokens[i].Type)
+		}
+
+		if tokens[i].Value != tc.expectedValue {
+			t.Fatalf("tests[%d] - token value wrong. expected=%q, got=%q", i, tc.expectedValue, tokens[i].Value)
+		}
 	}
 }
