@@ -5,43 +5,44 @@ import "fmt"
 type TokenType string
 
 const (
-	PLUS      = "+"
-	MINUS     = "-"
-	MUL       = "*"
-	DIV       = "/"
-	BANG      = "!"
-	LBRACKET  = "["
-	RBRACKET  = "]"
-	LPAREN    = "("
-	RPAREN    = ")"
-	LCURLY    = "{"
-	RCURLY    = "}"
-	SEMICOLON = ";"
-	GT        = ">"
-	LT        = "<"
-	GTE       = ">="
-	LTE       = "<="
-	ASSIGN    = "="
-	EQUAL     = "=="
-	NOT_EQUAL = "!="
+	TOKEN_PLUS      = "+"
+	TOKEN_MINUS     = "-"
+	TOKEN_MUL       = "*"
+	TOKEN_DIV       = "/"
+	TOKEN_BANG      = "!"
+	TOKEN_LBRACKET  = "["
+	TOKEN_RBRACKET  = "]"
+	TOKEN_LPAREN    = "("
+	TOKEN_RPAREN    = ")"
+	TOKEN_LCURLY    = "{"
+	TOKEN_RCURLY    = "}"
+	TOKEN_SEMICOLON = ";"
+	TOKEN_GT        = ">"
+	TOKEN_LT        = "<"
+	TOKEN_GTE       = ">="
+	TOKEN_LTE       = "<="
+	TOKEN_ASSIGN    = "="
+	TOKEN_EQUAL     = "=="
+	TOKEN_NOT_EQUAL = "!="
 
-	FUN    = "fun"
-	NIL    = "nil" // maybe
-	IF     = "if"
-	ELSE   = "else"
-	FOR    = "for"
-	WHILE  = "while" // maybe
-	RETURN = "return"
-	AND    = "and"
-	OR     = "or"
-	TRUE   = "true"
-	FALSE  = "false"
+	TOKEN_FUN    = "fun"
+	TOKEN_NIL    = "nil"
+	TOKEN_IF     = "if"
+	TOKEN_ELSE   = "else"
+	TOKEN_FOR    = "for"
+	TOKEN_WHILE  = "while"
+	TOKEN_RETURN = "return"
+	TOKEN_AND    = "and"
+	TOKEN_OR     = "or"
+	TOKEN_TRUE   = "true"
+	TOKEN_FALSE  = "false"
 
-	STRINGT    = "STRING_T" //(keyword)
-	INT        = "INT"
-	BOOL       = "BOOL"
-	BYTE       = "BYTE"
-	FLOAT      = "FLOAT"
+	TOKEN_STRING = "string"
+	TOKEN_INT    = "int"
+	TOKEN_BOOL   = "bool"
+	TOKEN_BYTE   = "byte"
+
+	NUMBER     = "NUMBER"
 	IDENTIFIER = "IDENTIFIER"
 	STRING     = "STRING"
 
@@ -58,22 +59,22 @@ type Token struct {
 }
 
 var keywords = map[string]TokenType{
-	"string": STRINGT,
-	"int":    INT,
-	"bool":   BOOL,
-	"byte":   BYTE,
-	"float":  FLOAT,
-	"fun":    FUN,
-	"nil":    NIL,
-	"if":     IF,
-	"else":   ELSE,
-	"for":    FOR,
-	"while":  WHILE,
-	"return": RETURN,
-	"and":    AND,
-	"or":     OR,
-	"true":   TRUE,
-	"false":  FALSE,
+	"string": TOKEN_STRING,
+	"int":    TOKEN_INT,
+	"bool":   TOKEN_BOOL,
+	"byte":   TOKEN_BYTE,
+	"float":  NUMBER,
+	"fun":    TOKEN_FUN,
+	"nil":    TOKEN_NIL,
+	"if":     TOKEN_IF,
+	"else":   TOKEN_ELSE,
+	"for":    TOKEN_FOR,
+	"while":  TOKEN_WHILE,
+	"return": TOKEN_RETURN,
+	"and":    TOKEN_AND,
+	"or":     TOKEN_OR,
+	"true":   TOKEN_TRUE,
+	"false":  TOKEN_FALSE,
 }
 
 func LookupIdent(ident string) TokenType {

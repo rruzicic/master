@@ -31,51 +31,51 @@ func (l *Lexer) Tokenize() []token.Token {
 		l.eatWhitespace()
 		switch l.ch {
 		case '+':
-			tokens = append(tokens, l.generateToken(token.PLUS))
+			tokens = append(tokens, l.generateToken(token.TOKEN_PLUS))
 		case '-':
-			tokens = append(tokens, l.generateToken(token.MINUS))
+			tokens = append(tokens, l.generateToken(token.TOKEN_MINUS))
 		case '*':
-			tokens = append(tokens, l.generateToken(token.MUL))
+			tokens = append(tokens, l.generateToken(token.TOKEN_MUL))
 		case '[':
-			tokens = append(tokens, l.generateToken(token.LBRACKET))
+			tokens = append(tokens, l.generateToken(token.TOKEN_LBRACKET))
 		case ']':
-			tokens = append(tokens, l.generateToken(token.RBRACKET))
+			tokens = append(tokens, l.generateToken(token.TOKEN_RBRACKET))
 		case '(':
-			tokens = append(tokens, l.generateToken(token.LPAREN))
+			tokens = append(tokens, l.generateToken(token.TOKEN_LPAREN))
 		case ')':
-			tokens = append(tokens, l.generateToken(token.RPAREN))
+			tokens = append(tokens, l.generateToken(token.TOKEN_RPAREN))
 		case '{':
-			tokens = append(tokens, l.generateToken(token.LCURLY))
+			tokens = append(tokens, l.generateToken(token.TOKEN_LCURLY))
 		case '}':
-			tokens = append(tokens, l.generateToken(token.RCURLY))
+			tokens = append(tokens, l.generateToken(token.TOKEN_RCURLY))
 		case ';':
-			tokens = append(tokens, l.generateToken(token.SEMICOLON))
+			tokens = append(tokens, l.generateToken(token.TOKEN_SEMICOLON))
 		case '>':
 			if l.match('=') {
-				tokens = append(tokens, l.generateToken(token.GTE))
+				tokens = append(tokens, l.generateToken(token.TOKEN_GTE))
 			} else {
-				tokens = append(tokens, l.generateToken(token.GT))
+				tokens = append(tokens, l.generateToken(token.TOKEN_GT))
 			}
 		case '<':
 			if l.match('=') {
-				tokens = append(tokens, l.generateToken(token.LTE))
+				tokens = append(tokens, l.generateToken(token.TOKEN_LTE))
 			} else {
-				tokens = append(tokens, l.generateToken(token.LT))
+				tokens = append(tokens, l.generateToken(token.TOKEN_LT))
 			}
 		case '=':
 			if l.match('=') {
-				tokens = append(tokens, l.generateToken(token.EQUAL))
+				tokens = append(tokens, l.generateToken(token.TOKEN_EQUAL))
 			} else {
-				tokens = append(tokens, l.generateToken(token.ASSIGN))
+				tokens = append(tokens, l.generateToken(token.TOKEN_ASSIGN))
 			}
 		case '!':
 			if l.match('=') {
-				tokens = append(tokens, l.generateToken(token.NOT_EQUAL))
+				tokens = append(tokens, l.generateToken(token.TOKEN_NOT_EQUAL))
 			} else {
-				tokens = append(tokens, l.generateToken(token.BANG))
+				tokens = append(tokens, l.generateToken(token.TOKEN_BANG))
 			}
 		case '/': // this could also be a comment
-			tokens = append(tokens, l.generateToken(token.DIV))
+			tokens = append(tokens, l.generateToken(token.TOKEN_DIV))
 		case '"':
 			str, err := l.sstring()
 			if err != nil {
@@ -112,7 +112,6 @@ func (l *Lexer) sstring() (string, error) {
 	return buffer.String(), nil
 }
 
-// TODO: implement float and rename func
 func (l *Lexer) number() token.Token {
 	var buffer bytes.Buffer
 	buffer.WriteByte(l.ch)
@@ -120,7 +119,7 @@ func (l *Lexer) number() token.Token {
 		l.advance()
 		buffer.WriteByte(l.ch)
 	}
-	return l.generateTokenWithValue(token.FLOAT, buffer.String())
+	return l.generateTokenWithValue(token.NUMBER, buffer.String())
 }
 
 func (l *Lexer) identifier() token.Token {
