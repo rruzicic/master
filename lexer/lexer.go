@@ -2,7 +2,7 @@ package lexer
 
 import (
 	"bytes"
-	"errors"
+	"fmt"
 	"interpreter/token"
 )
 
@@ -108,7 +108,7 @@ func (l *Lexer) sstring() (string, error) {
 	var buffer bytes.Buffer
 	for l.peek() != '"' {
 		if l.isAtEnd() {
-			return "", errors.New("unterminated string")
+			return "", fmt.Errorf("%d:%d: unterminated string", l.line, l.col)
 		}
 		l.advance()
 		buffer.WriteByte(l.ch)

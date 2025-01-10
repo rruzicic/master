@@ -186,7 +186,23 @@ func TestUnterminatedString(t *testing.T) {
 		{token.TOKEN_STRING, ""},
 		{token.IDENTIFIER, "a"},
 		{token.TOKEN_ASSIGN, ""},
-		{token.ERR, "unterminated string"},
+		{token.ERR, "3:17: unterminated string"},
+	}
+	testLexerOutput(t, input, tests)
+}
+
+func TestUnterminatedStringWithNewlines(t *testing.T) {
+	input := `
+	string a = "puta // not comment
+	
+	asdasd // not comment
+
+	`
+	tests := []TestCase{
+		{token.TOKEN_STRING, ""},
+		{token.IDENTIFIER, "a"},
+		{token.TOKEN_ASSIGN, ""},
+		{token.ERR, "6:1: unterminated string"},
 	}
 	testLexerOutput(t, input, tests)
 }
