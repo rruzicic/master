@@ -61,12 +61,12 @@ func (p *Parser) peekTokenIs(t token.TokenType) bool {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
-		t, p.peekToken.Type)
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
 }
 
 func (p *Parser) nextToken() {
+	// TODO: use channels or directly call NextToken, don't use arrays
 	p.curToken = p.peekToken
 	if len(p.tokens) == 1 {
 		p.peekToken = p.tokens[0]
@@ -152,7 +152,6 @@ func (p *Parser) peekPrecedence() int {
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
-
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
 		p.noPrefixParseFnError(p.curToken.Type)
@@ -171,6 +170,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 }
 
 func (p *Parser) parseNumberExpression() ast.Expression {
+	// TODO: we only parse integers, in the future we might add floats, this is where floats should be implemented
 	lit := &ast.IntegerLiteral{Token: p.curToken}
 	value, err := strconv.ParseInt(p.curToken.Value, 0, 64)
 	if err != nil {
