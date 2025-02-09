@@ -106,7 +106,6 @@ func New(l *lexer.Lexer) *Parser {
 }
 
 func (p *Parser) ParseProgram() *ast.Program {
-
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 	for p.curToken.Type != token.EOF {
@@ -129,10 +128,14 @@ func (p *Parser) parseDeclaration() ast.Statement {
 func (p *Parser) parseFunctionDeclaration() ast.Statement { return nil } // TODO: implement
 
 func (p *Parser) parseStatement() ast.Statement {
+	fmt.Println(p.curToken.Type)
 	switch p.curToken.Type {
 	case token.TOKEN_INT:
+		return p.parseVarStatement()
 	case token.TOKEN_STRING:
+		return p.parseVarStatement()
 	case token.TOKEN_BOOL:
+		return p.parseVarStatement()
 	case token.TOKEN_BYTE:
 		return p.parseVarStatement()
 	case token.TOKEN_WHILE:
@@ -147,7 +150,28 @@ func (p *Parser) parseStatement() ast.Statement {
 	return p.parseExpressionStatement()
 }
 
-func (p *Parser) parseVarStatement() *ast.VarStatement       { return nil } // TODO: implement
+func (p *Parser) parseVarStatement() *ast.VarStatement {
+	stmt := &ast.VarStatement{
+		Token: p.curToken,
+	}
+	p.nextToken()
+	stmt.Name = &ast.IdentifierExpression{
+		Token: p.curToken,
+		Value: p.curToken.Value,
+	}
+	p.nextToken()
+	if p.curToken.Type == token.TOKEN_ASSIGN {
+		p.nextToken()
+		stmt.Value = p.parseExpression(LOWEST)
+		p.nextToken()
+	} else if p.curToken.Type == token.TOKEN_SEMICOLON {
+		return stmt
+	} else {
+		p.errors = append(p.errors, "expected = or ; got neither")
+	}
+	return stmt
+}
+
 func (p *Parser) parseWhileStatement() *ast.WhileStatement   { return nil } // TODO: implement
 func (p *Parser) parseIfStatement() *ast.IfStatement         { return nil } // TODO: implement
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement { return nil } // TODO: implement
