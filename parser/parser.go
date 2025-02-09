@@ -128,7 +128,6 @@ func (p *Parser) parseDeclaration() ast.Statement {
 func (p *Parser) parseFunctionDeclaration() ast.Statement { return nil } // TODO: implement
 
 func (p *Parser) parseStatement() ast.Statement {
-	fmt.Println(p.curToken.Type)
 	switch p.curToken.Type {
 	case token.TOKEN_INT:
 		return p.parseVarStatement()
