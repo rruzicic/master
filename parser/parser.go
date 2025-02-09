@@ -110,7 +110,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 	for p.curToken.Type != token.EOF {
-		stmt := p.parseStatement()
+		stmt := p.parseDeclaration()
 		if stmt != nil {
 			program.Statements = append(program.Statements, stmt)
 		}
@@ -119,16 +119,39 @@ func (p *Parser) ParseProgram() *ast.Program {
 	return program
 }
 
-func (p *Parser) parseStatement() ast.Statement {
-	// switch p.curToken.Type {
-	// case token.LET:
-	// 	return p.parseLetStatement()
-	// case token.RETURN:
-	// 	return p.parseReturnStatement()
-	// default:
-	return p.parseExpressionStatement()
-	// }
+func (p *Parser) parseDeclaration() ast.Statement {
+	if p.curToken.Type == token.TOKEN_FUN {
+		return p.parseFunctionDeclaration()
+	}
+	return p.parseStatement()
 }
+
+func (p *Parser) parseFunctionDeclaration() ast.Statement { return nil } // TODO: implement
+
+func (p *Parser) parseStatement() ast.Statement {
+	switch p.curToken.Type {
+	case token.TOKEN_INT:
+	case token.TOKEN_STRING:
+	case token.TOKEN_BOOL:
+	case token.TOKEN_BYTE:
+		return p.parseVarStatement()
+	case token.TOKEN_WHILE:
+		return p.parseWhileStatement()
+	case token.TOKEN_IF:
+		return p.parseIfStatement()
+	case token.TOKEN_RETURN:
+		return p.parseReturnStatement()
+	case token.TOKEN_LCURLY:
+		return p.parseBlockStatement()
+	}
+	return p.parseExpressionStatement()
+}
+
+func (p *Parser) parseVarStatement() *ast.VarStatement       { return nil } // TODO: implement
+func (p *Parser) parseWhileStatement() *ast.WhileStatement   { return nil } // TODO: implement
+func (p *Parser) parseIfStatement() *ast.IfStatement         { return nil } // TODO: implement
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement { return nil } // TODO: implement
+func (p *Parser) parseBlockStatement() *ast.BlockStatement   { return nil } // TODO: implement
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 	stmt := &ast.ExpressionStatement{Token: p.curToken}

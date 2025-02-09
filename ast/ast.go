@@ -106,3 +106,95 @@ type IntegerLiteral struct {
 func (il *IntegerLiteral) expressionNode()      {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Value }
 func (il *IntegerLiteral) String() string       { return il.Token.Value }
+
+type VarStatement struct {
+	Token token.Token // type token
+	Name  *IdentifierExpression
+	Value Expression
+}
+
+func (vs *VarStatement) statementNode()       {}
+func (vs *VarStatement) TokenLiteral() string { return vs.Token.Value }
+func (vs *VarStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString(vs.TokenLiteral() + " ")
+	out.WriteString(vs.Name.String())
+	out.WriteString(" = ")
+	if vs.Value != nil {
+		out.WriteString(vs.Value.String())
+	}
+	out.WriteString(";")
+	return out.String()
+}
+
+type BlockStatement struct {
+	Token      token.Token // token.TOKEN_LCURLY token
+	Statements []Statement
+}
+
+func (bs *BlockStatement) statementNode()       {}
+func (bs *BlockStatement) TokenLiteral() string { return bs.Token.Value }
+func (bs *BlockStatement) String() string {
+	var out bytes.Buffer
+	for _, s := range bs.Statements {
+		out.WriteString(s.String())
+	}
+	return out.String()
+}
+
+type WhileStatement struct {
+	Token     token.Token // token.TOKEN_WHILE token
+	Condition Expression
+	Body      BlockStatement
+}
+
+func (ws *WhileStatement) statementNode()       {}
+func (ws *WhileStatement) TokenLiteral() string { return ws.Token.Value }
+func (ws *WhileStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString(ws.Token.Value)
+	out.WriteString("(")
+	out.WriteString(ws.Condition.String())
+	out.WriteString(")")
+	out.WriteString("{")
+	out.WriteString(ws.Body.String())
+	out.WriteString("}")
+	return out.String()
+}
+
+type IfStatement struct {
+	Token       token.Token // token.TOKEN_WHILE token
+	Condition   Expression
+	Body        *BlockStatement
+	Alternative *BlockStatement
+}
+
+func (is *IfStatement) statementNode()       {}
+func (is *IfStatement) TokenLiteral() string { return is.Token.Value }
+func (is *IfStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString(is.Token.Value)
+	out.WriteString("(")
+	out.WriteString(is.Condition.String())
+	out.WriteString(")")
+	out.WriteString(is.Body.String())
+	if is.Alternative != nil {
+		out.WriteString(" else ")
+		out.WriteString(is.Alternative.String())
+	}
+	return out.String()
+}
+
+type ReturnStatement struct {
+	Token token.Token // token.TOKEN_RETURN token
+	Value Expression
+}
+
+func (rs *ReturnStatement) statementNode()       {}
+func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Value }
+func (rs *ReturnStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString(rs.Token.Value)
+	out.WriteString(rs.Value.String())
+	return out.String()
+}

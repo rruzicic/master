@@ -1,22 +1,22 @@
 program := (declaration)* EOF;
 
 declaration :=  functionDeclaration
-			| varDeclaration
 			| statement ;
 
 functionDeclaration := "func" IDENTIFIER "(" parameterList ")" type block;
-
-varDeclaration := type IDENTIFIER "=" expression ";" ;
 
 parameterList := type IDENTIFIER ("," type IDENTIFIER)* ;
 
 block := "{" ( declaration )* "}" ;
 
-statement := expressionStatement
+statement := varStatement
+			| expressionStatement
 			| loopStatement
 			| ifStatement
 			| returnStatement
 			| block ;
+
+varStatement := type IDENTIFIER ("=" expression)? ";" ;
 
 expressionStatement := expression ";" ;
 
