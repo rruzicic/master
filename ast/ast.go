@@ -107,6 +107,39 @@ func (il *IntegerLiteral) expressionNode()      {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Value }
 func (il *IntegerLiteral) String() string       { return il.Token.Value }
 
+type BoolLiteral struct {
+	Token token.Token
+	Value bool
+}
+
+func (bl *BoolLiteral) expressionNode() {}
+func (bl *BoolLiteral) TokenLiteral() string {
+	// TODO: set value of Token.Value while scanning tokens and remove code below
+	if bl.Value {
+		return "true"
+	} else {
+		return "false"
+	}
+}
+func (bl *BoolLiteral) String() string {
+	// TODO: set value of Token.Value while scanning tokens and remove code below
+	if bl.Value {
+		return "true"
+	} else {
+		return "false"
+	}
+}
+
+type StringLiteral struct {
+	Token token.Token
+	Value string
+}
+
+func (sl *StringLiteral) expressionNode()      {}
+func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Value }
+func (sl *StringLiteral) String() string       { return sl.Token.Value }
+
+// TODO: add byte and float literal nodes
 type VarStatement struct {
 	Token token.Token // type token
 	Name  *IdentifierExpression

@@ -17,12 +17,13 @@ func TestExpressionStatement(t *testing.T) {
 		`, "a", 5},
 		{`int b = a;
 		`, "b", "a"},
+		{`bool x = false;
+		`, "x", false},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
 		p := New(l)
 		program := p.ParseProgram()
-
 		checkParserErrors(t, p)
 		if len(program.Statements) != 1 {
 			t.Fatalf("program.Statements does not contain 1 statements. got=%d", len(program.Statements))
@@ -51,10 +52,6 @@ func checkParserErrors(t *testing.T, p *Parser) {
 }
 
 func testVarStatement(t *testing.T, s ast.Statement, name string) bool {
-	// if s.TokenLiteral() != "let" {
-	// 	t.Errorf("s.TokenLiteral not 'let'. got=%q", s.TokenLiteral())
-	// 	return false
-	// }
 	varStmt, ok := s.(*ast.VarStatement)
 	if !ok {
 		t.Errorf("s not *ast.VarStatement. got=%T", s)
@@ -82,17 +79,34 @@ func testLiteralExpression(
 	expected interface{},
 ) bool {
 	switch v := expected.(type) {
-	// case bool:
-	// 	return testBooleanLiteral(t, exp, v)
+	case bool:
+		return testBooleanLiteral(t, exp, v)
 	case int:
 		return testIntegerLiteral(t, exp, int64(v))
-	// case int64:
-	// 	return testIntegerLiteral(t, exp, v)
+	case int64:
+		return testIntegerLiteral(t, exp, v)
 	case string:
 		return testIdentifier(t, exp, v)
 	}
 	t.Errorf("type of exp not handled. got=%T", exp)
 	return false
+}
+
+func testBooleanLiteral(t *testing.T, exp ast.Expression, value bool) bool {
+	bl, ok := exp.(*ast.BoolLiteral)
+	if !ok {
+		t.Errorf("exp not *ast.BoolLiteral. got=%T", exp)
+		return false
+	}
+	if bl.Value != value {
+		t.Errorf("bl.Value not %t. got=%t", value, bl.Value)
+		return false
+	}
+	if bl.TokenLiteral() != fmt.Sprintf("%t", value) {
+		t.Errorf("bl.TokenLiteral not %t. got=%s", value, bl.TokenLiteral())
+		return false
+	}
+	return true
 }
 
 func testIdentifier(t *testing.T, exp ast.Expression, value string) bool {
