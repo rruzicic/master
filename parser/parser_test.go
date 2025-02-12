@@ -39,6 +39,36 @@ func TestExpressionStatement(t *testing.T) {
 	}
 }
 
+// TODO: expand block statement tests when new stmts/expr get implemented
+func TestBlockStatement(t *testing.T) {
+	tests := []struct {
+		input                 string
+		expectedNumberOfStmts int
+	}{
+		{`
+		{
+			int a = 5;
+			bool b = true;
+		}
+		`, 1},
+	}
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+		if len(program.Statements) != tt.expectedNumberOfStmts {
+			t.Fatalf("program.Statements does not contain %d statements. got=%d", tt.expectedNumberOfStmts, len(program.Statements))
+		}
+		bs, ok := program.Statements[0].(*ast.BlockStatement)
+		if !ok {
+			t.Errorf("exp not *ast.BlockStatement. got=%T", bs)
+			return
+		}
+
+	}
+}
+
 func checkParserErrors(t *testing.T, p *Parser) {
 	errors := p.Errors()
 	if len(errors) == 0 {

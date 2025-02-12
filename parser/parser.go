@@ -165,6 +165,7 @@ func (p *Parser) parseVarStatement() *ast.VarStatement {
 		p.nextToken()
 		stmt.Value = p.parseExpression(LOWEST)
 		p.nextToken()
+		p.nextToken()
 	} else if p.curToken.Type == token.TOKEN_SEMICOLON {
 		return stmt
 	} else {
@@ -176,7 +177,19 @@ func (p *Parser) parseVarStatement() *ast.VarStatement {
 func (p *Parser) parseWhileStatement() *ast.WhileStatement   { return nil } // TODO: implement
 func (p *Parser) parseIfStatement() *ast.IfStatement         { return nil } // TODO: implement
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement { return nil } // TODO: implement
-func (p *Parser) parseBlockStatement() *ast.BlockStatement   { return nil } // TODO: implement
+
+func (p *Parser) parseBlockStatement() *ast.BlockStatement {
+	stmt := &ast.BlockStatement{
+		Token: p.curToken,
+	}
+	p.nextToken()
+	for p.curToken.Type != token.TOKEN_RCURLY && p.curToken.Type != token.EOF {
+		stmt.Statements = append(stmt.Statements, p.parseStatement())
+	}
+	p.nextToken()
+	p.nextToken()
+	return stmt
+}
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 	stmt := &ast.ExpressionStatement{Token: p.curToken}
