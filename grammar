@@ -1,19 +1,11 @@
-program := (declaration)* EOF;
-
-declaration :=  functionDeclaration
-			| statement ;
-
-functionDeclaration := "func" IDENTIFIER "(" parameterList ")" type block;
-
-parameterList := type IDENTIFIER ("," type IDENTIFIER)* ;
-
-block := "{" ( declaration )* "}" ;
+program := (statement)* EOF;
 
 statement := varStatement
 			| expressionStatement
 			| loopStatement
 			| ifStatement
 			| returnStatement
+			| functionDefinition
 			| block ;
 
 varStatement := type IDENTIFIER ("=" expression)? ";" ;
@@ -25,6 +17,12 @@ loopStatement := "while" expression statement;
 ifStatement := "if" expression statement ( "else" statement )? ;
 
 returnStatement := "return" expression ";" ;
+
+functionDefinition := "func" IDENTIFIER "(" parameterList ")" type block;
+
+parameterList := type IDENTIFIER ("," type IDENTIFIER)* ;
+
+block := "{" ( declaration )* "}" ;
 
 expression := assignment ;
 

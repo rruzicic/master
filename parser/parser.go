@@ -101,7 +101,25 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.NUMBER, p.parseNumberExpression)
 	p.registerPrefix(token.TOKEN_TRUE, p.parseBoolExpression)
 	p.registerPrefix(token.TOKEN_FALSE, p.parseBoolExpression)
+	// p.registerPrefix(token.TOKEN_STRING, p.parseStringExpression)
+	// p.registerPrefix(token.TOKEN_BYTE, p.parseByteExpression)
+	// p.registerPrefix(token.TOKEN_BANG, p.parsePrefixExpression)
+	// p.registerPrefix(token.TOKEN_MINUS, p.parsePrefixExpression)
+	// p.registerPrefix(token.TOKEN_LBRACKET, p.parseArrayExpression)
+	// p.registerPrefix(token.TOKEN_LPAREN, p.parseGroupExpression)
 
+	// p.registerInfix(token.TOKEN_PLUS, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_MINUS, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_MUL, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_DIV, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_EQUAL, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_NOT_EQUAL, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_GT, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_LT, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_GTE, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_LTE, p.parseInfixExpression)
+	// p.registerInfix(token.TOKEN_LBRACKET, p.parseIndexExpression)
+	// p.registerInfix(token.TOKEN_LPAREN, p.parseCallExpression)
 	p.nextToken()
 	p.nextToken()
 	return p
@@ -111,7 +129,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 	for p.curToken.Type != token.EOF {
-		stmt := p.parseDeclaration()
+		stmt := p.parseStatement()
 		if stmt != nil {
 			program.Statements = append(program.Statements, stmt)
 		}
@@ -119,15 +137,6 @@ func (p *Parser) ParseProgram() *ast.Program {
 	}
 	return program
 }
-
-func (p *Parser) parseDeclaration() ast.Statement {
-	if p.curToken.Type == token.TOKEN_FUN {
-		return p.parseFunctionDeclaration()
-	}
-	return p.parseStatement()
-}
-
-func (p *Parser) parseFunctionDeclaration() ast.Statement { return nil } // TODO: implement
 
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
@@ -147,6 +156,8 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseReturnStatement()
 	case token.TOKEN_LCURLY:
 		return p.parseBlockStatement()
+	case token.TOKEN_FUN:
+		return p.parseFunctionDefinition()
 	}
 	return p.parseExpressionStatement()
 }
@@ -177,6 +188,7 @@ func (p *Parser) parseVarStatement() *ast.VarStatement {
 func (p *Parser) parseWhileStatement() *ast.WhileStatement   { return nil } // TODO: implement
 func (p *Parser) parseIfStatement() *ast.IfStatement         { return nil } // TODO: implement
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement { return nil } // TODO: implement
+func (p *Parser) parseFunctionDefinition() ast.Statement     { return nil } // TODO: implement
 
 func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 	stmt := &ast.BlockStatement{
