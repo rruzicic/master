@@ -108,16 +108,17 @@ func New(l *lexer.Lexer) *Parser {
 	// p.registerPrefix(token.TOKEN_LBRACKET, p.parseArrayExpression)
 	// p.registerPrefix(token.TOKEN_LPAREN, p.parseGroupExpression)
 
-	// p.registerInfix(token.TOKEN_PLUS, p.parseInfixExpression)
-	// p.registerInfix(token.TOKEN_MINUS, p.parseInfixExpression)
-	// p.registerInfix(token.TOKEN_MUL, p.parseInfixExpression)
-	// p.registerInfix(token.TOKEN_DIV, p.parseInfixExpression)
-	// p.registerInfix(token.TOKEN_EQUAL, p.parseInfixExpression)
-	// p.registerInfix(token.TOKEN_NOT_EQUAL, p.parseInfixExpression)
-	// p.registerInfix(token.TOKEN_GT, p.parseInfixExpression)
-	// p.registerInfix(token.TOKEN_LT, p.parseInfixExpression)
-	// p.registerInfix(token.TOKEN_GTE, p.parseInfixExpression)
-	// p.registerInfix(token.TOKEN_LTE, p.parseInfixExpression)
+	p.infixParseFns = make(map[token.TokenType]infixParseFn)
+	p.registerInfix(token.TOKEN_PLUS, p.parseInfixExpression)
+	p.registerInfix(token.TOKEN_MINUS, p.parseInfixExpression)
+	p.registerInfix(token.TOKEN_MUL, p.parseInfixExpression)
+	p.registerInfix(token.TOKEN_DIV, p.parseInfixExpression)
+	p.registerInfix(token.TOKEN_EQUAL, p.parseInfixExpression)
+	p.registerInfix(token.TOKEN_NOT_EQUAL, p.parseInfixExpression)
+	p.registerInfix(token.TOKEN_GT, p.parseInfixExpression)
+	p.registerInfix(token.TOKEN_LT, p.parseInfixExpression)
+	p.registerInfix(token.TOKEN_GTE, p.parseInfixExpression)
+	p.registerInfix(token.TOKEN_LTE, p.parseInfixExpression)
 	// p.registerInfix(token.TOKEN_LBRACKET, p.parseIndexExpression)
 	// p.registerInfix(token.TOKEN_LPAREN, p.parseCallExpression)
 	p.nextToken()
@@ -240,6 +241,21 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 		leftExp = infix(leftExp)
 	}
 	return leftExp
+}
+
+func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
+	exp := &ast.InfixExpression{
+		Token:    p.curToken,
+		Left:     left,
+		Operator: string(p.curToken.Type), // TODO: set value of token to .Value not just .Type
+	}
+	prec := LOWEST
+	if p, ok := precedences[p.curToken.Type]; ok {
+		prec = p
+	}
+	p.nextToken()
+	exp.Right = p.parseExpression(prec)
+	return exp
 }
 
 func (p *Parser) parseNumberExpression() ast.Expression {
