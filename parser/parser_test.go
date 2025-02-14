@@ -91,6 +91,7 @@ func TestBlockStatement(t *testing.T) {
 	}
 }
 
+// TODO: consider merging prefix and infix expression tests
 func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 	tests := []struct {
 		input          string
@@ -98,6 +99,33 @@ func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 	}{
 		{`5 + 10 / 2;
 		`, "(5 + (10 / 2))"},
+	}
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := New(l)
+		program := p.ParseProgram()
+
+		checkParserErrors(t, p)
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain 1 statements. got=%d", len(program.Statements))
+		}
+		if program.Statements[0].String() != tt.expectedOutput {
+			t.Errorf("exp not %s. got=%s", tt.expectedOutput, program.Statements[0])
+			return
+		}
+
+	}
+}
+
+func TestPrefixExpressions(t *testing.T) { // TODO: add more tests after adding support for group expressions
+	tests := []struct {
+		input          string
+		expectedOutput string
+	}{
+		{`-5;
+		`, "(-5)"},
+		{`-5 + 2;
+		`, "((-5) + 2)"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)

@@ -100,11 +100,11 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.IDENTIFIER, p.parseIdentifier)
 	p.registerPrefix(token.NUMBER, p.parseNumberExpression)
 	p.registerPrefix(token.STRING, p.parseStringExpression)
+	// p.registerPrefix(token.BYTE, p.parseByteExpression)
 	p.registerPrefix(token.TOKEN_TRUE, p.parseBoolExpression)
 	p.registerPrefix(token.TOKEN_FALSE, p.parseBoolExpression)
-	// p.registerPrefix(token.TOKEN_BYTE, p.parseByteExpression)
-	// p.registerPrefix(token.TOKEN_BANG, p.parsePrefixExpression)
-	// p.registerPrefix(token.TOKEN_MINUS, p.parsePrefixExpression)
+	p.registerPrefix(token.TOKEN_BANG, p.parsePrefixExpression)
+	p.registerPrefix(token.TOKEN_MINUS, p.parsePrefixExpression)
 	// p.registerPrefix(token.TOKEN_LBRACKET, p.parseArrayExpression)
 	// p.registerPrefix(token.TOKEN_LPAREN, p.parseGroupExpression)
 
@@ -255,6 +255,16 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	}
 	p.nextToken()
 	exp.Right = p.parseExpression(prec)
+	return exp
+}
+
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	exp := &ast.PrefixExpression{
+		Token:    p.curToken,
+		Operator: string(p.curToken.Type),
+	}
+	p.nextToken()
+	exp.Right = p.parseExpression(PREFIX)
 	return exp
 }
 
