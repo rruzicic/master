@@ -126,6 +126,8 @@ func TestPrefixExpressions(t *testing.T) { // TODO: add more tests after adding 
 		`, "(-5)"},
 		{`-5 + 2;
 		`, "((-5) + 2)"},
+		{`-(5 + 2);
+		`, "(-(5 + 2))"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
