@@ -39,6 +39,28 @@ func TestExpressionStatement(t *testing.T) {
 	}
 }
 
+func TestStringLiteralExpression(t *testing.T) {
+	input := `string pera = "mira";
+	`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	stmt := program.Statements[0].(*ast.VarStatement)
+	literal, ok := stmt.Value.(*ast.StringLiteral)
+	if stmt.Name.Value != "pera" {
+		t.Fatalf("var stmt identifier not pera. got=%s", stmt.Name.Value)
+	}
+	if !ok {
+		t.Fatalf("exp not *ast.StringLiteral. got=%T", stmt.Value)
+	}
+
+	if literal.Value != "mira" {
+		t.Errorf("literal.Value not %q. got=%q", "mira", literal.Value)
+	}
+
+}
+
 // TODO: expand block statement tests when new stmts/expr get implemented
 func TestBlockStatement(t *testing.T) {
 	tests := []struct {
