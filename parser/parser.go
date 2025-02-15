@@ -108,7 +108,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.TOKEN_FALSE, p.parseBoolExpression)
 	p.registerPrefix(token.TOKEN_BANG, p.parsePrefixExpression)
 	p.registerPrefix(token.TOKEN_MINUS, p.parsePrefixExpression)
-	// p.registerPrefix(token.TOKEN_LBRACKET, p.parseArrayExpression)
+	p.registerPrefix(token.TOKEN_LBRACKET, p.parseArrayExpression)
 	p.registerPrefix(token.TOKEN_LPAREN, p.parseGroupExpression)
 
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
@@ -327,6 +327,28 @@ func (p *Parser) parseGroupExpression() ast.Expression {
 	p.nextToken()
 	exp := p.parseExpression(LOWEST)
 	if !p.expectPeek(token.TOKEN_RPAREN) {
+		return nil
+	}
+	return exp
+}
+
+func (p *Parser) parseArrayExpression() ast.Expression {
+	exp := &ast.ArrayLiteral{
+		Token: p.curToken,
+	}
+	if p.peekToken.Type == token.TOKEN_RBRACKET {
+		p.nextToken()
+		return exp
+	}
+	p.nextToken()
+	exp.Values = append(exp.Values, p.parseExpression(LOWEST))
+	for p.peekToken.Type == token.TOKEN_COMMA {
+		p.nextToken()
+		p.nextToken()
+		exp.Values = append(exp.Values, p.parseExpression(LOWEST))
+	}
+	if p.peekToken.Type != token.TOKEN_RBRACKET {
+		// TODO: add error in parser errors here
 		return nil
 	}
 	return exp

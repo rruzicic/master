@@ -51,6 +51,8 @@ func (l *Lexer) Tokenize() []token.Token {
 			tokens = append(tokens, l.generateToken(token.TOKEN_RCURLY))
 		case ';':
 			tokens = append(tokens, l.generateToken(token.TOKEN_SEMICOLON))
+		case ',':
+			tokens = append(tokens, l.generateToken(token.TOKEN_COMMA))
 		case '>':
 			if l.match('=') {
 				tokens = append(tokens, l.generateToken(token.TOKEN_GTE))

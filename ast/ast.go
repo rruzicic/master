@@ -240,3 +240,23 @@ func (rs *ReturnStatement) String() string {
 	out.WriteString(rs.Value.String())
 	return out.String()
 }
+
+type ArrayLiteral struct {
+	Token  token.Token
+	Values []Expression
+}
+
+func (al *ArrayLiteral) expressionNode()      {}
+func (al *ArrayLiteral) TokenLiteral() string { return al.Token.Value }
+func (al *ArrayLiteral) String() string {
+	var buf bytes.Buffer
+	buf.WriteString("[")
+	for i, e := range al.Values {
+		buf.WriteString(e.String())
+		if len(al.Values) > i+1 {
+			buf.WriteString(" ")
+		}
+	}
+	buf.WriteString("]")
+	return buf.String()
+}

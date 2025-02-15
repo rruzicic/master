@@ -17,6 +17,7 @@ const (
 	TOKEN_LCURLY    = "{"
 	TOKEN_RCURLY    = "}"
 	TOKEN_SEMICOLON = ";"
+	TOKEN_COMMA     = ","
 	TOKEN_GT        = ">"
 	TOKEN_LT        = "<"
 	TOKEN_GTE       = ">="

@@ -17,6 +17,8 @@ func TestExpressionStatement(t *testing.T) {
 		{"int b = a;", "b", "a"},
 		{"bool x = false;", "x", false},
 		{"float y = 571.1;", "y", 571.1},
+		{"int z = [ 1 , 2 , 3 ];", "z", []int{1, 2, 3}},
+		{"int h = [ 1 ];", "h", []int{1}},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
@@ -177,6 +179,10 @@ func testLiteralExpression(t *testing.T, exp ast.Expression, expected interface{
 	switch v := expected.(type) {
 	case bool:
 		return testBooleanLiteral(t, exp, v)
+	case []int:
+		return testIntegerArrayLiteral(t, exp, v)
+	// case []int64:
+	// 	return testIntegerArrayLiteral(t, exp, []int(v))
 	case int:
 		return testIntegerLiteral(t, exp, int64(v))
 	case int64:
@@ -255,6 +261,27 @@ func testFloatLiteral(t *testing.T, fl ast.Expression, value float64) bool {
 	}
 	if float.TokenLiteral() != fmt.Sprintf("%g", value) {
 		t.Errorf("fl.TokenLiteral not %g. got=%s", value, float.TokenLiteral())
+		return false
+	}
+	return true
+}
+
+func testIntegerArrayLiteral(t *testing.T, al ast.Expression, value []int) bool {
+	arr, ok := al.(*ast.ArrayLiteral)
+	if !ok {
+		t.Errorf("al not *ast.ArrayLiteral. got=%T", al)
+		return false
+	}
+	for i, v := range arr.Values {
+		il, ok := v.(*ast.IntegerLiteral)
+		if !ok {
+			t.Errorf("il[%d] not *ast.IntegerLiteral. got=%T", i, il)
+			return false
+		}
+	}
+	t.Logf("%d", len(arr.Values))
+	if arr.String() != fmt.Sprintf("%d", value) {
+		t.Errorf("al.TokenLiteral not %d. got=%s", value, arr.String())
 		return false
 	}
 	return true
