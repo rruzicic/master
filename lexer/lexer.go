@@ -124,7 +124,14 @@ func (l *Lexer) sstring() (string, error) {
 func (l *Lexer) number() token.Token {
 	var buffer bytes.Buffer
 	buffer.WriteByte(l.ch)
-	for isDigit(l.peek()) {
+	hadDot := false
+	for isDigit(l.peek()) || l.peek() == '.' {
+		if l.peek() == '.' && hadDot {
+			return l.generateToken(token.ERR)
+		}
+		if l.peek() == '.' {
+			hadDot = true
+		}
 		l.advance()
 		buffer.WriteByte(l.ch)
 	}

@@ -29,6 +29,7 @@ func TestTokenize(t *testing.T) {
 		c = nil;
 	}
 	fun d(string a){return a;}
+	c = 561.2;
 }
 	`
 	tests := []TestCase{
@@ -111,6 +112,10 @@ func TestTokenize(t *testing.T) {
 		{token.IDENTIFIER, "a"},
 		{token.TOKEN_SEMICOLON, ""},
 		{token.TOKEN_RCURLY, ""},
+		{token.IDENTIFIER, "c"},
+		{token.TOKEN_ASSIGN, ""},
+		{token.NUMBER, "561.2"},
+		{token.TOKEN_SEMICOLON, ""},
 		{token.TOKEN_RCURLY, ""},
 		{token.EOF, ""},
 	}

@@ -6,6 +6,7 @@ import (
 	"interpreter/lexer"
 	"interpreter/token"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -68,6 +69,9 @@ func (p *Parser) peekError(t token.TokenType) {
 func (p *Parser) nextToken() {
 	// TODO: use channels or directly call NextToken, don't use arrays
 	p.curToken = p.peekToken
+	if p.curToken.Type == token.ERR {
+		p.errors = append(p.errors, "received an error token")
+	}
 	if len(p.tokens) == 1 {
 		p.peekToken = p.tokens[0]
 	} else {
@@ -100,7 +104,6 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.IDENTIFIER, p.parseIdentifier)
 	p.registerPrefix(token.NUMBER, p.parseNumberExpression)
 	p.registerPrefix(token.STRING, p.parseStringExpression)
-	// p.registerPrefix(token.BYTE, p.parseByteExpression)
 	p.registerPrefix(token.TOKEN_TRUE, p.parseBoolExpression)
 	p.registerPrefix(token.TOKEN_FALSE, p.parseBoolExpression)
 	p.registerPrefix(token.TOKEN_BANG, p.parsePrefixExpression)
@@ -148,6 +151,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.TOKEN_BOOL:
 		return p.parseVarStatement()
 	case token.TOKEN_BYTE:
+		return p.parseVarStatement()
+	case token.TOKEN_FLOAT:
 		return p.parseVarStatement()
 	case token.TOKEN_WHILE:
 		return p.parseWhileStatement()
@@ -269,16 +274,33 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 }
 
 func (p *Parser) parseNumberExpression() ast.Expression {
-	// TODO: we only parse integers, in the future we might add floats, this is where floats should be implemented
-	lit := &ast.IntegerLiteral{Token: p.curToken}
-	value, err := strconv.ParseInt(p.curToken.Value, 0, 64)
-	if err != nil {
-		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Value)
-		p.errors = append(p.errors, msg)
+	if floatExp := p.parseFloatNumber(); floatExp != nil {
+		return floatExp
+	}
+	// parse int
+	valueInt, err := strconv.ParseInt(p.curToken.Value, 0, 64)
+	if err == nil {
+		lit := &ast.IntegerLiteral{Token: p.curToken}
+		lit.Value = valueInt
+		return lit
+	}
+	// TODO: parse byte
+
+	msg := fmt.Sprintf("could not parse %q as integer, float or byte, %s", p.curToken.Value, err)
+	p.errors = append(p.errors, msg)
+	return nil
+}
+
+func (p *Parser) parseFloatNumber() ast.Expression {
+	if !strings.Contains(p.curToken.Value, ".") {
 		return nil
 	}
-	lit.Value = value
-	return lit
+	if valueFloat, err := strconv.ParseFloat(p.curToken.Value, 64); err == nil {
+		lit := &ast.FloatLiteral{Token: p.curToken}
+		lit.Value = valueFloat
+		return lit
+	}
+	return nil
 }
 
 func (p *Parser) parseBoolExpression() ast.Expression {

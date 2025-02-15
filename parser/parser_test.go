@@ -16,6 +16,7 @@ func TestExpressionStatement(t *testing.T) {
 		{"int a = 5;", "a", 5},
 		{"int b = a;", "b", "a"},
 		{"bool x = false;", "x", false},
+		{"float y = 571.1;", "y", 571.1},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
@@ -39,7 +40,6 @@ func TestExpressionStatement(t *testing.T) {
 func TestStringLiteralExpression(t *testing.T) {
 	input := `string pera = "mira";`
 	l := lexer.New(input)
-	// t.Log(l.Tokenize())
 	p := New(l)
 	program := p.ParseProgram()
 	checkParserErrors(t, p)
@@ -173,11 +173,7 @@ func testVarStatement(t *testing.T, s ast.Statement, name string) bool {
 	return true
 }
 
-func testLiteralExpression(
-	t *testing.T,
-	exp ast.Expression,
-	expected interface{},
-) bool {
+func testLiteralExpression(t *testing.T, exp ast.Expression, expected interface{}) bool {
 	switch v := expected.(type) {
 	case bool:
 		return testBooleanLiteral(t, exp, v)
@@ -185,6 +181,10 @@ func testLiteralExpression(
 		return testIntegerLiteral(t, exp, int64(v))
 	case int64:
 		return testIntegerLiteral(t, exp, v)
+	case float32:
+		return testFloatLiteral(t, exp, float64(v))
+	case float64:
+		return testFloatLiteral(t, exp, float64(v))
 	case string:
 		return testIdentifier(t, exp, v)
 	}
@@ -238,6 +238,23 @@ func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
 	}
 	if integ.TokenLiteral() != fmt.Sprintf("%d", value) {
 		t.Errorf("integ.TokenLiteral not %d. got=%s", value, integ.TokenLiteral())
+		return false
+	}
+	return true
+}
+
+func testFloatLiteral(t *testing.T, fl ast.Expression, value float64) bool {
+	float, ok := fl.(*ast.FloatLiteral)
+	if !ok {
+		t.Errorf("fl not *ast.FloatLiteral. got=%T", fl)
+		return false
+	}
+	if float.Value != value {
+		t.Errorf("fl.Value not %g. got=%g", value, float.Value)
+		return false
+	}
+	if float.TokenLiteral() != fmt.Sprintf("%g", value) {
+		t.Errorf("fl.TokenLiteral not %g. got=%s", value, float.TokenLiteral())
 		return false
 	}
 	return true

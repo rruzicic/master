@@ -40,6 +40,7 @@ const (
 	TOKEN_STRING = "string"
 	TOKEN_INT    = "int"
 	TOKEN_BOOL   = "bool"
+	TOKEN_FLOAT  = "float"
 	TOKEN_BYTE   = "byte"
 
 	NUMBER     = "NUMBER"
@@ -64,7 +65,7 @@ var keywords = map[string]TokenType{
 	"int":    TOKEN_INT,
 	"bool":   TOKEN_BOOL,
 	"byte":   TOKEN_BYTE,
-	"float":  NUMBER,
+	"float":  TOKEN_FLOAT,
 	"fun":    TOKEN_FUN,
 	"nil":    TOKEN_NIL,
 	"if":     TOKEN_IF,
