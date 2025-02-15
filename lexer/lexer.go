@@ -24,10 +24,11 @@ func New(input string) *Lexer {
 func (l *Lexer) Tokenize() []token.Token {
 	tokens := []token.Token{}
 	for {
+		l.advance()
 		if l.isAtEnd() {
+			tokens = append(tokens, l.generateToken(token.EOF))
 			break
 		}
-		l.advance()
 		l.eatWhitespace()
 		switch l.ch {
 		case '+':
@@ -99,6 +100,9 @@ func (l *Lexer) Tokenize() []token.Token {
 				tokens = append(tokens, l.generateToken(token.ERR))
 				l.HasError = true
 			}
+		}
+		if l.isAtEnd() {
+			break
 		}
 	}
 	return tokens

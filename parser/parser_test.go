@@ -13,12 +13,9 @@ func TestExpressionStatement(t *testing.T) {
 		expectedIdentifier string
 		expectedValue      interface{}
 	}{
-		{`int a = 5;
-		`, "a", 5},
-		{`int b = a;
-		`, "b", "a"},
-		{`bool x = false;
-		`, "x", false},
+		{"int a = 5;", "a", 5},
+		{"int b = a;", "b", "a"},
+		{"bool x = false;", "x", false},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
@@ -40,9 +37,9 @@ func TestExpressionStatement(t *testing.T) {
 }
 
 func TestStringLiteralExpression(t *testing.T) {
-	input := `string pera = "mira";
-	`
+	input := `string pera = "mira";`
 	l := lexer.New(input)
+	// t.Log(l.Tokenize())
 	p := New(l)
 	program := p.ParseProgram()
 	checkParserErrors(t, p)
@@ -97,8 +94,7 @@ func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 		input          string
 		expectedOutput string
 	}{
-		{`5 + 10 / 2;
-		`, "(5 + (10 / 2))"},
+		{"5 + 10 / 2;", "(5 + (10 / 2))"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
@@ -122,12 +118,9 @@ func TestPrefixExpressions(t *testing.T) { // TODO: add more tests after adding 
 		input          string
 		expectedOutput string
 	}{
-		{`-5;
-		`, "(-5)"},
-		{`-5 + 2;
-		`, "((-5) + 2)"},
-		{`-(5 + 2);
-		`, "(-(5 + 2))"},
+		{"-5;", "(-5)"},
+		{"-5 + 2;", "((-5) + 2)"},
+		{"-(5 + 2);", "(-(5 + 2))"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)

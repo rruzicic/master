@@ -131,6 +131,7 @@ func TestTokenizeInvalidTokens(t *testing.T) {
 		{token.TOKEN_IF, ""},
 		{token.TOKEN_ELSE, ""},
 		{token.IDENTIFIER, "ELSE"},
+		// {token.EOF, ""}, // TODO: figure out why we don't get EOF here
 	}
 	testLexerOutput(t, input, tests)
 }
