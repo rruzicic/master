@@ -66,10 +66,12 @@ func TestBlockStatement(t *testing.T) {
 		input                 string
 		expectedNumberOfStmts int
 	}{
+		// TODO: add dedicated test for IndexExpression
 		{`
 		{
 			int a = 5;
 			bool b = true;
+			int c = a[1];
 		}
 		`, 1},
 	}
@@ -279,7 +281,6 @@ func testIntegerArrayLiteral(t *testing.T, al ast.Expression, value []int) bool 
 			return false
 		}
 	}
-	t.Logf("%d", len(arr.Values))
 	if arr.String() != fmt.Sprintf("%d", value) {
 		t.Errorf("al.TokenLiteral not %d. got=%s", value, arr.String())
 		return false
