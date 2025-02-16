@@ -69,9 +69,8 @@ func TestBlockStatement(t *testing.T) {
 		// TODO: add dedicated test for IndexExpression
 		{`
 		{
-			int a = 5;
-			bool b = true;
-			int c = a[1];
+			a = pera();
+
 		}
 		`, 1},
 	}
@@ -99,6 +98,9 @@ func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 		expectedOutput string
 	}{
 		{"5 + 10 / 2;", "(5 + (10 / 2))"},
+		{"pera();", "(pera())"},
+		{"pera(1,2,3);", "(pera(1, 2, 3))"},
+		{"a(1);", "(a(1))"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)

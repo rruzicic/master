@@ -279,3 +279,27 @@ func (ie *IndexExpression) String() string {
 	buf.WriteString(")")
 	return buf.String()
 }
+
+type CallExpression struct {
+	Token             token.Token // ( token
+	FunctionIdentifer token.Token
+	Parameters        []Expression
+}
+
+func (ce *CallExpression) expressionNode()      {}
+func (ce *CallExpression) TokenLiteral() string { return ce.Token.Value }
+func (ce *CallExpression) String() string {
+	var buf bytes.Buffer
+	buf.WriteString("(")
+	buf.WriteString(ce.FunctionIdentifer.Value)
+	buf.WriteString("(")
+	for i, p := range ce.Parameters {
+		buf.WriteString(p.String())
+		if len(ce.Parameters) > i+1 {
+			buf.WriteString(", ")
+		}
+	}
+	buf.WriteString(")")
+	buf.WriteString(")")
+	return buf.String()
+}

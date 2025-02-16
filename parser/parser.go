@@ -123,7 +123,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.TOKEN_GTE, p.parseInfixExpression)
 	p.registerInfix(token.TOKEN_LTE, p.parseInfixExpression)
 	p.registerInfix(token.TOKEN_LBRACKET, p.parseIndexExpression)
-	// p.registerInfix(token.TOKEN_LPAREN, p.parseCallExpression)
+	p.registerInfix(token.TOKEN_LPAREN, p.parseCallExpression)
 	p.nextToken()
 	p.nextToken()
 	return p
@@ -200,12 +200,15 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 	stmt := &ast.BlockStatement{
 		Token: p.curToken,
 	}
+	stmt.Statements = []ast.Statement{}
 	p.nextToken()
 	for p.curToken.Type != token.TOKEN_RCURLY && p.curToken.Type != token.EOF {
-		stmt.Statements = append(stmt.Statements, p.parseStatement())
+		parsedStmt := p.parseStatement()
+		if parsedStmt != nil {
+			stmt.Statements = append(stmt.Statements, parsedStmt)
+		}
+		p.nextToken()
 	}
-	p.nextToken()
-	p.nextToken()
 	return stmt
 }
 
@@ -215,6 +218,7 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 	if p.peekTokenIs(token.TOKEN_SEMICOLON) {
 		p.nextToken()
 	}
+	// TODO: throw error here
 	return stmt
 }
 
@@ -351,6 +355,7 @@ func (p *Parser) parseArrayExpression() ast.Expression {
 		// TODO: add error in parser errors here
 		return nil
 	}
+	p.nextToken()
 	return exp
 }
 
@@ -363,6 +368,35 @@ func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
 	exp.Index = p.parseExpression(LOWEST)
 	if p.peekToken.Type != token.TOKEN_RBRACKET {
 		// TODO: throw err here
+		return nil
+	}
+	p.nextToken()
+	return exp
+}
+
+func (p *Parser) parseCallExpression(left ast.Expression) ast.Expression {
+	funIdent, ok := left.(*ast.IdentifierExpression)
+	if !ok {
+		p.errors = append(p.errors, "invalid function identifier")
+		return nil
+	}
+	exp := &ast.CallExpression{
+		Token:             p.curToken,
+		FunctionIdentifer: funIdent.Token,
+	}
+	if p.peekToken.Type == token.TOKEN_RPAREN {
+		p.nextToken()
+		return exp
+	}
+	p.nextToken()
+	exp.Parameters = append(exp.Parameters, p.parseExpression(LOWEST))
+	for p.peekToken.Type == token.TOKEN_COMMA {
+		p.nextToken()
+		p.nextToken()
+		exp.Parameters = append(exp.Parameters, p.parseExpression(LOWEST))
+	}
+	if p.peekToken.Type != token.TOKEN_RPAREN {
+		p.errors = append(p.errors, "expected )")
 		return nil
 	}
 	p.nextToken()
