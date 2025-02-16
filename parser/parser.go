@@ -170,9 +170,13 @@ func (p *Parser) parseStatement() ast.Statement {
 
 func (p *Parser) parseVarStatement() *ast.VarStatement {
 	stmt := &ast.VarStatement{
-		Token: p.curToken,
+		Token: p.curToken, // type token e.g. int, string, float,...
 	}
 	p.nextToken()
+	if p.curToken.Type != token.IDENTIFIER {
+		p.errors = append(p.errors, "expected identifier")
+		return nil
+	}
 	stmt.Name = &ast.IdentifierExpression{
 		Token: p.curToken,
 		Value: p.curToken.Value,
@@ -182,13 +186,13 @@ func (p *Parser) parseVarStatement() *ast.VarStatement {
 		p.nextToken()
 		stmt.Value = p.parseExpression(LOWEST)
 		p.nextToken()
-		p.nextToken()
+		return stmt
 	} else if p.curToken.Type == token.TOKEN_SEMICOLON {
 		return stmt
 	} else {
 		p.errors = append(p.errors, "expected = or ; got neither")
+		return nil
 	}
-	return stmt
 }
 
 func (p *Parser) parseWhileStatement() *ast.WhileStatement   { return nil } // TODO: implement

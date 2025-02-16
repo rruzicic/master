@@ -69,8 +69,10 @@ func TestBlockStatement(t *testing.T) {
 		// TODO: add dedicated test for IndexExpression
 		{`
 		{
-			a = pera();
-
+			int a = pera(1);
+			pera(1,2,3);
+			int c = djoka(634, 234, 234);
+			int d=a;
 		}
 		`, 1},
 	}
