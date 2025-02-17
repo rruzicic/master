@@ -195,7 +195,16 @@ func (p *Parser) parseVarStatement() *ast.VarStatement {
 	}
 }
 
-func (p *Parser) parseWhileStatement() *ast.WhileStatement   { return nil } // TODO: implement
+func (p *Parser) parseWhileStatement() *ast.WhileStatement {
+	stmt := &ast.WhileStatement{
+		Token: p.curToken,
+	}
+	p.nextToken()
+	stmt.Condition = p.parseExpression(LOWEST)
+	stmt.Body = *p.parseBlockStatement()
+	return stmt
+}
+
 func (p *Parser) parseIfStatement() *ast.IfStatement         { return nil } // TODO: implement
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement { return nil } // TODO: implement
 func (p *Parser) parseFunctionDefinition() ast.Statement     { return nil } // TODO: implement

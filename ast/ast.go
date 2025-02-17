@@ -93,7 +93,7 @@ func (es *ExpressionStatement) statementNode()       {}
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Value }
 func (es *ExpressionStatement) String() string {
 	if es.Expression != nil {
-		return es.Expression.String()
+		return es.Expression.String() + ";"
 	}
 	return ""
 }
@@ -179,8 +179,9 @@ func (bs *BlockStatement) TokenLiteral() string { return bs.Token.Value }
 func (bs *BlockStatement) String() string {
 	var out bytes.Buffer
 	for _, s := range bs.Statements {
-		out.WriteString(s.String())
+		out.WriteString("\n\t" + s.String())
 	}
+	out.WriteString("\n")
 	return out.String()
 }
 
@@ -195,10 +196,10 @@ func (ws *WhileStatement) TokenLiteral() string { return ws.Token.Value }
 func (ws *WhileStatement) String() string {
 	var out bytes.Buffer
 	out.WriteString(ws.Token.Value)
-	out.WriteString("(")
+	out.WriteString("while (")
 	out.WriteString(ws.Condition.String())
 	out.WriteString(")")
-	out.WriteString("{")
+	out.WriteString(" {")
 	out.WriteString(ws.Body.String())
 	out.WriteString("}")
 	return out.String()

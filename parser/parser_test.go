@@ -93,16 +93,35 @@ func TestBlockStatement(t *testing.T) {
 	}
 }
 
+func TestWhileStatement(t *testing.T) {
+	input := `
+	while (zika > 3) {
+		int a = a + 1;
+		a + 1;
+		b - 5;
+	}
+	`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	stmt, ok := program.Statements[0].(*ast.WhileStatement)
+	if !ok {
+		t.Fatalf("exp not *ast.WhileStatement. got=%T", stmt)
+	}
+
+}
+
 // TODO: consider merging prefix and infix expression tests
 func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 	tests := []struct {
 		input          string
 		expectedOutput string
 	}{
-		{"5 + 10 / 2;", "(5 + (10 / 2))"},
-		{"pera();", "(pera())"},
-		{"pera(1,2,3);", "(pera(1, 2, 3))"},
-		{"a(1);", "(a(1))"},
+		{"5 + 10 / 2;", "(5 + (10 / 2));"},
+		{"pera();", "(pera());"},
+		{"pera(1,2,3);", "(pera(1, 2, 3));"},
+		{"a(1);", "(a(1));"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
@@ -126,9 +145,9 @@ func TestPrefixExpressions(t *testing.T) { // TODO: add more tests after adding 
 		input          string
 		expectedOutput string
 	}{
-		{"-5;", "(-5)"},
-		{"-5 + 2;", "((-5) + 2)"},
-		{"-(5 + 2);", "(-(5 + 2))"},
+		{"-5;", "(-5);"},
+		{"-5 + 2;", "((-5) + 2);"},
+		{"-(5 + 2);", "(-(5 + 2));"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
