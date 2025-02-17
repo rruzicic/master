@@ -205,14 +205,27 @@ func (p *Parser) parseWhileStatement() *ast.WhileStatement {
 	return stmt
 }
 
-func (p *Parser) parseIfStatement() *ast.IfStatement         { return nil } // TODO: implement
+// TODO: implement IF ... ELSE IF .... ELSE
+func (p *Parser) parseIfStatement() *ast.IfStatement {
+	stmt := &ast.IfStatement{
+		Token: p.curToken,
+	}
+	p.nextToken()
+	stmt.Condition = p.parseExpression(LOWEST)
+	p.nextToken()
+	stmt.Body = p.parseBlockStatement()
+	if p.peekToken.Type == token.TOKEN_ELSE {
+		p.nextToken()
+		stmt.Alternative = p.parseBlockStatement()
+	}
+	return stmt
+}
+
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement { return nil } // TODO: implement
 func (p *Parser) parseFunctionDefinition() ast.Statement     { return nil } // TODO: implement
 
 func (p *Parser) parseBlockStatement() *ast.BlockStatement {
-	stmt := &ast.BlockStatement{
-		Token: p.curToken,
-	}
+	stmt := &ast.BlockStatement{Token: p.curToken}
 	stmt.Statements = []ast.Statement{}
 	p.nextToken()
 	for p.curToken.Type != token.TOKEN_RCURLY && p.curToken.Type != token.EOF {

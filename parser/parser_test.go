@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"interpreter/ast"
 	"interpreter/lexer"
+	"strings"
 	"testing"
 )
 
@@ -58,6 +59,45 @@ func TestStringLiteralExpression(t *testing.T) {
 		t.Errorf("literal.Value not %q. got=%q", "mira", literal.Value)
 	}
 
+}
+
+func TestIfElseStatement(t *testing.T) {
+	input := `
+	if (pera == 3) {
+		int jova = 5;
+	} else {
+		int djoka = 8;
+	}
+	`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	stmt, ok := program.Statements[0].(*ast.IfStatement)
+	if !ok {
+		t.Fatalf("exp not *ast.IfStatement. got=%T", stmt)
+	}
+
+	if stmt.Condition.String() != "(pera == 3)" {
+		t.Fatalf("condition not (pera == 3). got=%s", stmt.Condition)
+	}
+
+	if len(stmt.Body.Statements) != 1 {
+		t.Fatalf("number of body statements not 1. got=%d", len(stmt.Body.Statements))
+	}
+
+	if stmt.Body.Statements[0].String() != "int jova = 5;" {
+		t.Fatalf("body statement not 'int jova = 5;'. got='%s'", stmt.Body.Statements[0])
+	}
+
+	if len(stmt.Alternative.Statements) != 1 {
+		t.Fatalf("number of alternative statements not 1. got=%d", len(stmt.Alternative.Statements))
+	}
+
+	t.Log(stmt.Alternative.Statements[0])
+	if strings.Trim(stmt.Alternative.Statements[0].String(), " \n\t") != "int djoka = 8;" {
+		t.Fatalf("alternative statement not 'int djoka = 8;'. got='%s'", strings.Trim(stmt.Alternative.Statements[0].String(), " \n\t"))
+	}
 }
 
 // TODO: expand block statement tests when new stmts/expr get implemented
