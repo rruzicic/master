@@ -61,6 +61,22 @@ func TestStringLiteralExpression(t *testing.T) {
 
 }
 
+func TestReturnStatement(t *testing.T) {
+	input := `return 2+2;`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	stmt, ok := program.Statements[0].(*ast.ReturnStatement)
+	if !ok {
+		t.Fatalf("stmt not *ast.ReturnStatement")
+	}
+	if stmt.Value.String() != "(2 + 2)" {
+		t.Fatalf("stmt value not '(2+2)'. got=%s", stmt.Value)
+	}
+
+}
+
 func TestIfElseStatement(t *testing.T) {
 	input := `
 	if (pera == 3) {

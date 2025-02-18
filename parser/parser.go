@@ -221,8 +221,15 @@ func (p *Parser) parseIfStatement() *ast.IfStatement {
 	return stmt
 }
 
-func (p *Parser) parseReturnStatement() *ast.ReturnStatement { return nil } // TODO: implement
-func (p *Parser) parseFunctionDefinition() ast.Statement     { return nil } // TODO: implement
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	stmt := &ast.ReturnStatement{
+		Token: p.curToken,
+	}
+	p.nextToken()
+	stmt.Value = p.parseExpression(LOWEST)
+	return stmt
+}
+func (p *Parser) parseFunctionDefinition() ast.Statement { return nil } // TODO: implement
 
 func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 	stmt := &ast.BlockStatement{Token: p.curToken}
