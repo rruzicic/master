@@ -229,7 +229,61 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	stmt.Value = p.parseExpression(LOWEST)
 	return stmt
 }
-func (p *Parser) parseFunctionDefinition() ast.Statement { return nil } // TODO: implement
+func (p *Parser) parseFunctionDefinition() ast.Statement {
+	stmt := &ast.FunctionStatement{
+		Token: p.curToken,
+	}
+	p.nextToken()
+	if p.curToken.Type != token.IDENTIFIER {
+		p.errors = append(p.errors, "function definition missing identifier")
+		return nil
+	}
+	stmt.Identifier = p.curToken
+	p.nextToken()
+
+	stmt.ParameterList = p.parseFunctionParameterList()
+
+	p.nextToken()
+
+	stmt.ReturnType = p.curToken
+
+	stmt.Body = p.parseBlockStatement()
+
+	return stmt
+}
+
+func (p *Parser) parseFunctionParameterList() []ast.IdentifierExpression {
+	paramList := []ast.IdentifierExpression{}
+	if p.peekToken.Type == token.TOKEN_RPAREN {
+		return paramList
+	}
+
+	p.nextToken()
+	ident := ast.IdentifierExpression{
+		Token: p.curToken,
+		Type:  p.curToken,
+	}
+	p.nextToken()
+	ident.Type = p.curToken
+	paramList = append(paramList, ident)
+	for p.peekToken.Type == token.TOKEN_COMMA {
+		p.nextToken()
+		p.nextToken()
+		ident := ast.IdentifierExpression{
+			Token: p.curToken,
+			Type:  p.curToken,
+		}
+		p.nextToken()
+		ident.Type = p.curToken
+		paramList = append(paramList, ident)
+	}
+
+	if !p.expectPeek(token.TOKEN_RPAREN) {
+		return nil
+	}
+
+	return paramList
+}
 
 func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 	stmt := &ast.BlockStatement{Token: p.curToken}

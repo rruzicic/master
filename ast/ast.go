@@ -77,6 +77,7 @@ func (pe *PrefixExpression) String() string {
 
 type IdentifierExpression struct {
 	Token token.Token
+	Type  token.Token
 	Value string
 }
 
@@ -96,6 +97,35 @@ func (es *ExpressionStatement) String() string {
 		return es.Expression.String() + ";"
 	}
 	return ""
+}
+
+type FunctionStatement struct {
+	Token         token.Token // token.TOKEN_FUNCTION
+	Identifier    token.Token
+	ReturnType    token.Token
+	ParameterList []IdentifierExpression
+	Body          *BlockStatement
+}
+
+func (fs *FunctionStatement) statementNode() {}
+func (fs *FunctionStatement) TokenLiteral() string {
+	return fs.Identifier.Value
+}
+func (fs *FunctionStatement) String() string {
+	var buf bytes.Buffer
+	buf.WriteString("func ")
+	buf.WriteString(fs.Identifier.Value)
+	buf.WriteString("(")
+	for i, p := range fs.ParameterList {
+		buf.WriteString(p.String())
+		if len(fs.ParameterList) > i+1 {
+			buf.WriteString(", ")
+		}
+	}
+	buf.WriteString(") ")
+	buf.WriteString(fs.ReturnType.String())
+	buf.WriteString(fs.Body.String())
+	return buf.String()
 }
 
 type IntegerLiteral struct {

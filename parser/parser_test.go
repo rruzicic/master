@@ -168,6 +168,23 @@ func TestWhileStatement(t *testing.T) {
 
 }
 
+func TestFunctionDefinition(t *testing.T) {
+	input := `
+	fun x(int a, int b) int {
+		int a = a + 1;
+	}
+	`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	stmt, ok := program.Statements[0].(*ast.FunctionStatement)
+	if !ok {
+		t.Fatalf("exp not *ast.FunctionStatement. got=%T", stmt)
+	}
+
+}
+
 // TODO: consider merging prefix and infix expression tests
 func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 	tests := []struct {
