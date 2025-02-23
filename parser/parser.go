@@ -89,6 +89,10 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 	}
 }
 
+func (p *Parser) curIsTypeToken() bool {
+	return p.curToken.Type == token.TOKEN_INT || p.curToken.Type == token.TOKEN_STRING || p.curToken.Type == token.TOKEN_BOOL || p.curToken.Type == token.TOKEN_BYTE || p.curToken.Type == token.TOKEN_FLOAT
+}
+
 func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
 	p.prefixParseFns[tokenType] = fn
 }
@@ -229,6 +233,7 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	stmt.Value = p.parseExpression(LOWEST)
 	return stmt
 }
+
 func (p *Parser) parseFunctionDefinition() ast.Statement {
 	stmt := &ast.FunctionStatement{
 		Token: p.curToken,
@@ -245,7 +250,14 @@ func (p *Parser) parseFunctionDefinition() ast.Statement {
 
 	p.nextToken()
 
-	stmt.ReturnType = p.curToken
+	if p.curIsTypeToken() {
+		stmt.ReturnType = p.curToken
+		p.nextToken()
+	}
+
+	if p.curToken.Type != token.TOKEN_LCURLY {
+		p.errors = append(p.errors, fmt.Sprintf("expected {, got %s", p.curToken.Type))
+	}
 
 	stmt.Body = p.parseBlockStatement()
 
