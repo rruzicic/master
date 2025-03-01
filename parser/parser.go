@@ -158,6 +158,10 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseVarStatement()
 	case token.TOKEN_FLOAT:
 		return p.parseVarStatement()
+	case token.IDENTIFIER:
+		if p.peekToken.Type == token.TOKEN_ASSIGN {
+			return p.parseVarStatement()
+		}
 	case token.TOKEN_WHILE:
 		return p.parseWhileStatement()
 	case token.TOKEN_IF:
@@ -173,18 +177,20 @@ func (p *Parser) parseStatement() ast.Statement {
 }
 
 func (p *Parser) parseVarStatement() *ast.VarStatement {
-	stmt := &ast.VarStatement{
-		Token: p.curToken, // type token e.g. int, string, float,...
+	stmt := &ast.VarStatement{Token: p.curToken}
+	identifier := &ast.IdentifierExpression{}
+	if p.curIsTypeToken() {
+		identifier.Type = p.curToken
+		identifier.Token = p.curToken
+		p.nextToken()
 	}
-	p.nextToken()
 	if p.curToken.Type != token.IDENTIFIER {
 		p.errors = append(p.errors, "expected identifier")
 		return nil
 	}
-	stmt.Name = &ast.IdentifierExpression{
-		Token: p.curToken,
-		Value: p.curToken.Value,
-	}
+	identifier.Token = p.curToken
+	identifier.Value = p.curToken.Value
+	stmt.Identifier = identifier
 	p.nextToken()
 	if p.curToken.Type == token.TOKEN_ASSIGN {
 		p.nextToken()

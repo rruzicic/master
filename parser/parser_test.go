@@ -48,8 +48,8 @@ func TestStringLiteralExpression(t *testing.T) {
 	checkParserErrors(t, p)
 	stmt := program.Statements[0].(*ast.VarStatement)
 	literal, ok := stmt.Value.(*ast.StringLiteral)
-	if stmt.Name.Value != "pera" {
-		t.Fatalf("var stmt identifier not pera. got=%s", stmt.Name.Value)
+	if stmt.Identifier.Value != "pera" {
+		t.Fatalf("var stmt identifier not pera. got=%s", stmt.Identifier.Value)
 	}
 	if !ok {
 		t.Fatalf("exp not *ast.StringLiteral. got=%T", stmt.Value)
@@ -171,7 +171,8 @@ func TestWhileStatement(t *testing.T) {
 func TestFunctionDefinition(t *testing.T) {
 	input := `
 	fun x(int a, int b) int {
-		int a = a + 1;
+		int b = b + 1;
+		a = a + 1;
 	}
 	`
 	l := lexer.New(input)
@@ -257,17 +258,17 @@ func testVarStatement(t *testing.T, s ast.Statement, name string) bool {
 		t.Errorf("s not *ast.VarStatement. got=%T", s)
 		return false
 	}
-	if varStmt.Name == nil {
+	if varStmt.Identifier == nil {
 		t.Errorf("varStmt.Name is nil")
 		return false
 
 	}
-	if varStmt.Name.Value != name {
-		t.Errorf("varStmt.Name.Value not '%s'. got=%s", name, varStmt.Name.Value)
+	if varStmt.Identifier.Value != name {
+		t.Errorf("varStmt.Name.Value not '%s'. got=%s", name, varStmt.Identifier.Value)
 		return false
 	}
-	if varStmt.Name.TokenLiteral() != name {
-		t.Errorf("s.Name not '%s'. got=%s", name, varStmt.Name)
+	if varStmt.Identifier.TokenLiteral() != name {
+		t.Errorf("s.Name not '%s'. got=%s", name, varStmt.Identifier)
 		return false
 	}
 	return true

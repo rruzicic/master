@@ -180,9 +180,9 @@ func (sl *StringLiteral) String() string       { return sl.Token.Value }
 
 // TODO: add byte and float literal nodes
 type VarStatement struct {
-	Token token.Token // type token
-	Name  *IdentifierExpression
-	Value Expression
+	Token      token.Token // type token
+	Identifier *IdentifierExpression
+	Value      Expression
 }
 
 func (vs *VarStatement) statementNode()       {}
@@ -190,7 +190,7 @@ func (vs *VarStatement) TokenLiteral() string { return vs.Token.Value }
 func (vs *VarStatement) String() string {
 	var out bytes.Buffer
 	out.WriteString(string(vs.Token.Type) + " ")
-	out.WriteString(vs.Name.String())
+	out.WriteString(vs.Identifier.String())
 	if vs.Value != nil {
 		out.WriteString(" = ")
 		out.WriteString(vs.Value.String())
