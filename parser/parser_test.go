@@ -110,7 +110,6 @@ func TestIfElseStatement(t *testing.T) {
 		t.Fatalf("number of alternative statements not 1. got=%d", len(stmt.Alternative.Statements))
 	}
 
-	t.Log(stmt.Alternative.Statements[0])
 	if strings.Trim(stmt.Alternative.Statements[0].String(), " \n\t") != "int djoka = 8;" {
 		t.Fatalf("alternative statement not 'int djoka = 8;'. got='%s'", strings.Trim(stmt.Alternative.Statements[0].String(), " \n\t"))
 	}

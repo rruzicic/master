@@ -456,11 +456,7 @@ func (p *Parser) parseArrayExpression() ast.Expression {
 		p.nextToken()
 		exp.Values = append(exp.Values, p.parseExpression(LOWEST))
 	}
-	if p.peekToken.Type != token.TOKEN_RBRACKET {
-		// TODO: add error in parser errors here
-		return nil
-	}
-	p.nextToken()
+	p.expectPeek(token.TOKEN_RBRACKET)
 	return exp
 }
 
@@ -471,11 +467,7 @@ func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
 	}
 	p.nextToken()
 	exp.Index = p.parseExpression(LOWEST)
-	if p.peekToken.Type != token.TOKEN_RBRACKET {
-		// TODO: throw err here
-		return nil
-	}
-	p.nextToken()
+	p.expectPeek(token.TOKEN_RBRACKET)
 	return exp
 }
 
