@@ -189,7 +189,9 @@ func (vs *VarStatement) statementNode()       {}
 func (vs *VarStatement) TokenLiteral() string { return vs.Token.Value }
 func (vs *VarStatement) String() string {
 	var out bytes.Buffer
-	out.WriteString(string(vs.Token.Type) + " ")
+	if vs.Token.Type != token.IDENTIFIER {
+		out.WriteString(string(vs.Token.Type) + " ")
+	}
 	out.WriteString(vs.Identifier.String())
 	if vs.Value != nil {
 		out.WriteString(" = ")

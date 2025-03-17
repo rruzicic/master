@@ -27,7 +27,7 @@ func TestExpressionStatement(t *testing.T) {
 		program := p.ParseProgram()
 		checkParserErrors(t, p)
 		if len(program.Statements) != 1 {
-			t.Fatalf("program.Statements does not contain 1 statements. got=%d", len(program.Statements))
+			t.Fatalf("program.Statements does not contain 1 statement. got=%d", len(program.Statements))
 		}
 		stmt := program.Statements[0]
 		if !testVarStatement(t, stmt, tt.expectedIdentifier) {
@@ -40,6 +40,7 @@ func TestExpressionStatement(t *testing.T) {
 	}
 }
 
+// TODO: more test cases(spaces, tabs, weird charcters etc)
 func TestStringLiteralExpression(t *testing.T) {
 	input := `string pera = "mira";`
 	l := lexer.New(input)
@@ -61,6 +62,7 @@ func TestStringLiteralExpression(t *testing.T) {
 
 }
 
+// TODO: more test cases(and different return types: string, bool, full expressions)
 func TestReturnStatement(t *testing.T) {
 	input := `return 2+2;`
 	l := lexer.New(input)
@@ -77,6 +79,7 @@ func TestReturnStatement(t *testing.T) {
 
 }
 
+// TODO: test only if
 func TestIfElseStatement(t *testing.T) {
 	input := `
 	if (pera == 3) {
@@ -116,6 +119,7 @@ func TestIfElseStatement(t *testing.T) {
 }
 
 // TODO: expand block statement tests when new stmts/expr get implemented
+// TODO: nested block statements
 func TestBlockStatement(t *testing.T) {
 	tests := []struct {
 		input                 string
@@ -148,6 +152,7 @@ func TestBlockStatement(t *testing.T) {
 	}
 }
 
+// TODO: more tests(with nesting)
 func TestWhileStatement(t *testing.T) {
 	input := `
 	while (zika > 3) {
@@ -167,6 +172,7 @@ func TestWhileStatement(t *testing.T) {
 
 }
 
+// TODO: check return type, parameters, function name
 func TestFunctionDefinition(t *testing.T) {
 	input := `
 	fun x(int a, int b) int {
@@ -195,6 +201,8 @@ func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 		{"pera();", "(pera());"},
 		{"pera(1,2,3);", "(pera(1, 2, 3));"},
 		{"a(1);", "(a(1));"},
+		{"b = 5 + 2 / 3 - 6 * 9 - a(1);", "b = (((5 + (2 / 3)) - (6 * 9)) - (a(1)));"},
+		{"int j = 9123 - a[81] * (12 - 3);", "int j = (9123 - ((a[81]) * (12 - 3)));"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
@@ -213,7 +221,8 @@ func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 	}
 }
 
-func TestPrefixExpressions(t *testing.T) { // TODO: add more tests after adding support for group expressions
+// TODO: add more tests after adding support for group expressions
+func TestPrefixExpressions(t *testing.T) {
 	tests := []struct {
 		input          string
 		expectedOutput string
