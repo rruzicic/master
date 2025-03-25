@@ -3,7 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"interpreter/evaluator"
 	"interpreter/lexer"
+	"interpreter/object"
+	"interpreter/parser"
 	"os"
 )
 
@@ -39,9 +42,19 @@ func repl() {
 
 func run(input string) {
 	l := lexer.New(input)
-	tokens := l.Tokenize()
-	fmt.Println(l.HasError)
-	for _, v := range tokens {
-		fmt.Println(v)
+	if l.HasError {
+		fmt.Println(l.HasError)
+		return
+	}
+	p := parser.New(l)
+	prog := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		fmt.Println(p.Errors())
+		return
+	}
+	env := object.NewEnvironment()
+	eval := evaluator.Eval(prog.Statements[0], env)
+	if eval != nil {
+		fmt.Println(eval.Inspect())
 	}
 }
