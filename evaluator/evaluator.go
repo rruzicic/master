@@ -14,15 +14,27 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	case *ast.FloatLiteral:
+		return &object.Float{Value: node.Value}
 	case *ast.ArrayLiteral:
 	case *ast.BoolLiteral:
+		return &object.Boolean{Value: node.Value}
 	case *ast.StringLiteral:
+		return &object.String{Value: node.Value}
 
 	// identifier
 	case *ast.IdentifierExpression:
 
 	// expressions
 	case *ast.InfixExpression:
+		left := Eval(node.Left, env)
+		if left.Type() == object.ERROR_OBJ {
+			return left
+		}
+		right := Eval(node.Right, env)
+		if right.Type() == object.ERROR_OBJ {
+			return right
+		}
+		return evalInfixExpression(left, right, node.Operator)
 	case *ast.PrefixExpression:
 	case *ast.CallExpression:
 	case *ast.IndexExpression:
@@ -52,4 +64,48 @@ func evalProgram(node *ast.Program, env *object.Environment) object.Object {
 		}
 	}
 	return ret
+}
+
+func evalInfixExpression(left object.Object, right object.Object, operator string) object.Object {
+	switch {
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
+		l := left.(*object.Integer).Value
+		r := right.(*object.Integer).Value
+		switch operator {
+
+		case "+":
+			return &object.Integer{Value: l + r}
+		case "-":
+			return &object.Integer{Value: l - r}
+		case "/":
+			return &object.Integer{Value: l / r}
+		case "*":
+			return &object.Integer{Value: l * r}
+		case ">":
+			return &object.Boolean{Value: l > r}
+		case "<":
+			return &object.Boolean{Value: l < r}
+		case "==":
+			return &object.Boolean{Value: l == r}
+		case "!=":
+			return &object.Boolean{Value: l != r}
+		default:
+			return &object.Error{Error: "unknown operator: " + operator}
+		}
+	case operator == "==":
+		return &object.Boolean{Value: left == right}
+	case operator == "!=":
+		return &object.Boolean{Value: left != right}
+	case left.Type() != right.Type():
+		return &object.Error{Error: "type mismatch"}
+	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
+		if operator != "+" {
+			return &object.Error{Error: "operator other than + not allowed for strings"}
+		}
+		l := left.(*object.String).Value
+		r := right.(*object.String).Value
+		return &object.String{Value: l + r}
+	default:
+		return &object.Error{Error: "unknown error "}
+	}
 }
