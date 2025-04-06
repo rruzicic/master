@@ -74,7 +74,6 @@ func evalInfixExpression(left object.Object, right object.Object, operator strin
 		l := left.(*object.Integer).Value
 		r := right.(*object.Integer).Value
 		switch operator {
-
 		case "+":
 			return &object.Integer{Value: l + r}
 		case "-":
@@ -83,6 +82,43 @@ func evalInfixExpression(left object.Object, right object.Object, operator strin
 			return &object.Integer{Value: l / r}
 		case "*":
 			return &object.Integer{Value: l * r}
+		case ">":
+			return nativeBoolToBooleanObject(l > r)
+		case "<":
+			return nativeBoolToBooleanObject(l < r)
+		case "==":
+			return nativeBoolToBooleanObject(l == r)
+		case "!=":
+			return nativeBoolToBooleanObject(l != r)
+		default:
+			return &object.Error{Error: "unknown operator: " + operator}
+		}
+	case (left.Type() == object.FLOAT_OBJ && right.Type() == object.INTEGER_OBJ) ||
+		(right.Type() == object.FLOAT_OBJ && left.Type() == object.INTEGER_OBJ) ||
+		(left.Type() == object.FLOAT_OBJ && right.Type() == object.FLOAT_OBJ):
+		var l float64
+		var r float64
+		if left.Type() == object.INTEGER_OBJ {
+			l = float64(left.(*object.Integer).Value)
+		} else {
+			l = left.(*object.Float).Value
+		}
+
+		if right.Type() == object.INTEGER_OBJ {
+			r = float64(right.(*object.Integer).Value)
+		} else {
+			r = right.(*object.Float).Value
+		}
+		switch operator {
+
+		case "+":
+			return &object.Float{Value: l + r}
+		case "-":
+			return &object.Float{Value: l - r}
+		case "/":
+			return &object.Float{Value: l / r}
+		case "*":
+			return &object.Float{Value: l * r}
 		case ">":
 			return nativeBoolToBooleanObject(l > r)
 		case "<":

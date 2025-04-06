@@ -54,6 +54,21 @@ func TestInfixExpressionEvaluation(t *testing.T) {
 			returnType:  object.BOOLEAN_OBJ,
 			returnValue: "true",
 		},
+		{
+			input:       "1.1 + 5;",
+			returnType:  object.FLOAT_OBJ,
+			returnValue: "6.100000",
+		},
+		{
+			input:       "1.1 + 5.2;",
+			returnType:  object.FLOAT_OBJ,
+			returnValue: "6.300000",
+		},
+		{
+			input:       "1.1 == 1.1;",
+			returnType:  object.BOOLEAN_OBJ,
+			returnValue: "true",
+		},
 	}
 	for i, tC := range testCases {
 		l := lexer.New(tC.input)
