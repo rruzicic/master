@@ -150,6 +150,10 @@ func (l *Lexer) identifier() token.Token {
 	tok := token.LookupIdent(buffer.String())
 	if tok == token.IDENTIFIER {
 		return l.generateTokenWithValue(token.IDENTIFIER, buffer.String())
+	} else if tok == token.TOKEN_TRUE {
+		return l.generateTokenWithValue(token.TOKEN_TRUE, "true")
+	} else if tok == token.TOKEN_FALSE {
+		return l.generateTokenWithValue(token.TOKEN_FALSE, "false")
 	} else {
 		return l.generateToken(tok)
 	}

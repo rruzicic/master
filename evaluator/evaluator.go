@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"fmt"
 	"interpreter/ast"
 	"interpreter/object"
 )
@@ -17,7 +18,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.Float{Value: node.Value}
 	case *ast.ArrayLiteral:
 	case *ast.BoolLiteral:
-		return &object.Boolean{Value: node.Value}
+		fmt.Println(node)
+		return nativeBoolToBooleanObject(node.Value)
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 
@@ -82,20 +84,20 @@ func evalInfixExpression(left object.Object, right object.Object, operator strin
 		case "*":
 			return &object.Integer{Value: l * r}
 		case ">":
-			return &object.Boolean{Value: l > r}
+			return nativeBoolToBooleanObject(l > r)
 		case "<":
-			return &object.Boolean{Value: l < r}
+			return nativeBoolToBooleanObject(l < r)
 		case "==":
-			return &object.Boolean{Value: l == r}
+			return nativeBoolToBooleanObject(l == r)
 		case "!=":
-			return &object.Boolean{Value: l != r}
+			return nativeBoolToBooleanObject(l != r)
 		default:
 			return &object.Error{Error: "unknown operator: " + operator}
 		}
 	case operator == "==":
-		return &object.Boolean{Value: left == right}
+		return nativeBoolToBooleanObject(left == right)
 	case operator == "!=":
-		return &object.Boolean{Value: left != right}
+		return nativeBoolToBooleanObject(left != right)
 	case left.Type() != right.Type():
 		return &object.Error{Error: "type mismatch"}
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
@@ -108,4 +110,17 @@ func evalInfixExpression(left object.Object, right object.Object, operator strin
 	default:
 		return &object.Error{Error: "unknown error "}
 	}
+}
+
+var (
+	NULL  = &object.Null{}
+	TRUE  = &object.Boolean{Value: true}
+	FALSE = &object.Boolean{Value: false}
+)
+
+func nativeBoolToBooleanObject(input bool) *object.Boolean {
+	if input {
+		return TRUE
+	}
+	return FALSE
 }
