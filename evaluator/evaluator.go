@@ -18,14 +18,16 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.Float{Value: node.Value}
 	case *ast.ArrayLiteral:
 	case *ast.BoolLiteral:
-		fmt.Println(node)
 		return nativeBoolToBooleanObject(node.Value)
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 
 	// identifier
 	case *ast.IdentifierExpression:
-
+		if val, ok := env.Get(node.Value); ok {
+			return val
+		}
+		return &object.Error{Error: fmt.Sprintf("identifier not found: " + node.Value)}
 	// expressions
 	case *ast.InfixExpression:
 		left := Eval(node.Left, env)
@@ -47,6 +49,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.IfStatement:
 	case *ast.ReturnStatement:
 	case *ast.VarStatement:
+		value := Eval(node.Value, env)
+		if value.Type() == object.ERROR_OBJ {
+			return value
+		}
+		env.Set(node.Identifier.Value, value)
 	case *ast.WhileStatement:
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)

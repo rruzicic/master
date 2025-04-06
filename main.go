@@ -21,14 +21,16 @@ func main() {
 }
 
 func file(filename string) {
+	env := object.NewEnvironment()
 	f, err := os.ReadFile(filename)
 	if err != nil {
 		panic("could not open file")
 	}
-	run(string(f))
+	run(string(f), env)
 }
 
 func repl() {
+	env := object.NewEnvironment()
 	for {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("> ")
@@ -36,11 +38,11 @@ func repl() {
 		if err != nil {
 			panic(fmt.Sprintf("could not read input: %s", err))
 		}
-		run(input)
+		run(input, env)
 	}
 }
 
-func run(input string) {
+func run(input string, env *object.Environment) {
 	l := lexer.New(input)
 	if l.HasError {
 		fmt.Println(l.HasError)
@@ -52,7 +54,6 @@ func run(input string) {
 		fmt.Println(p.Errors())
 		return
 	}
-	env := object.NewEnvironment()
 	eval := evaluator.Eval(prog.Statements[0], env)
 	if eval != nil {
 		fmt.Println(eval.Inspect())
