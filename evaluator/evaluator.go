@@ -41,13 +41,43 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalInfixExpression(left, right, node.Operator)
 	case *ast.PrefixExpression:
 	case *ast.CallExpression:
+		function := Eval(node.FunctionIdentifer, env)
+		if function.Type() == object.ERROR_OBJ {
+			return function
+		}
+		params := evalParameters(node.Parameters, env)
+		if len(params) == 1 && params[0].Type() == object.ERROR_OBJ {
+			return params[0]
+		}
+		return evalFunction(function, params)
 	case *ast.IndexExpression:
-
 		// statements
 	case *ast.BlockStatement:
+		var ret object.Object
+		for _, statement := range node.Statements {
+			ret = Eval(statement, env)
+			if ret != nil {
+				if ret.Type() == object.RETURN_VALUE_OBJ || ret.Type() == object.ERROR_OBJ {
+					return ret
+				}
+			}
+		}
+		return ret
 	case *ast.FunctionStatement:
+		function := &object.Function{
+			Params: node.ParameterList,
+			Body:   node.Body,
+			Env:    env,
+		}
+		env.Set(node.Identifier.Value, function)
+		return function
 	case *ast.IfStatement:
 	case *ast.ReturnStatement:
+		val := Eval(node.Value, env)
+		if val.Type() == object.ERROR_OBJ {
+			return val
+		}
+		return &object.ReturnValue{Value: val}
 	case *ast.VarStatement:
 		value := Eval(node.Value, env)
 		if value.Type() == object.ERROR_OBJ {
@@ -166,4 +196,38 @@ func nativeBoolToBooleanObject(input bool) *object.Boolean {
 		return TRUE
 	}
 	return FALSE
+}
+
+func evalParameters(params []ast.Expression, env *object.Environment) []object.Object {
+	var ret []object.Object
+	for _, p := range params {
+		eval := Eval(p, env)
+		if eval.Type() == object.ERROR_OBJ {
+			return []object.Object{eval}
+		}
+		ret = append(ret, eval)
+	}
+	return ret
+}
+
+func evalFunction(fn object.Object, params []object.Object) object.Object {
+	switch funcc := fn.(type) {
+	case *object.Function:
+		newEnv := expandEnv(funcc, params)
+		ev := Eval(funcc.Body, newEnv)
+		if retVal, ok := ev.(*object.ReturnValue); ok {
+			return retVal.Value
+		}
+		return ev
+	default:
+		return &object.Error{Error: "not a func"}
+	}
+}
+
+func expandEnv(fn *object.Function, params []object.Object) *object.Environment {
+	env := object.NewEnclosedEnvironment(fn.Env)
+	for i, param := range fn.Params {
+		env.Set(param.Value, params[i])
+	}
+	return env
 }

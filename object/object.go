@@ -64,7 +64,7 @@ func (e *Error) Inspect() string  { return fmt.Sprintf("ERROR: %s", e.Error) }
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
 
 type Function struct {
-	Params []*ast.IdentifierExpression
+	Params []ast.IdentifierExpression
 	Body   *ast.BlockStatement
 	Env    *Environment
 }

@@ -237,6 +237,9 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	}
 	p.nextToken()
 	stmt.Value = p.parseExpression(LOWEST)
+	if p.peekTokenIs(token.TOKEN_SEMICOLON) {
+		p.nextToken()
+	}
 	return stmt
 }
 
@@ -283,6 +286,7 @@ func (p *Parser) parseFunctionParameterList() []ast.IdentifierExpression {
 	}
 	p.nextToken()
 	ident.Type = p.curToken
+	ident.Value = p.curToken.Value
 	paramList = append(paramList, ident)
 	for p.peekToken.Type == token.TOKEN_COMMA {
 		p.nextToken()
@@ -293,6 +297,7 @@ func (p *Parser) parseFunctionParameterList() []ast.IdentifierExpression {
 		}
 		p.nextToken()
 		ident.Type = p.curToken
+		ident.Value = p.curToken.Value
 		paramList = append(paramList, ident)
 	}
 
@@ -479,7 +484,7 @@ func (p *Parser) parseCallExpression(left ast.Expression) ast.Expression {
 	}
 	exp := &ast.CallExpression{
 		Token:             p.curToken,
-		FunctionIdentifer: funIdent.Token,
+		FunctionIdentifer: funIdent,
 	}
 	if p.peekToken.Type == token.TOKEN_RPAREN {
 		p.nextToken()

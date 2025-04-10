@@ -315,7 +315,7 @@ func (ie *IndexExpression) String() string {
 
 type CallExpression struct {
 	Token             token.Token // ( token
-	FunctionIdentifer token.Token
+	FunctionIdentifer Expression
 	Parameters        []Expression
 }
 
@@ -324,7 +324,7 @@ func (ce *CallExpression) TokenLiteral() string { return ce.Token.Value }
 func (ce *CallExpression) String() string {
 	var buf bytes.Buffer
 	buf.WriteString("(")
-	buf.WriteString(ce.FunctionIdentifer.Value)
+	buf.WriteString(ce.FunctionIdentifer.String())
 	buf.WriteString("(")
 	for i, p := range ce.Parameters {
 		buf.WriteString(p.String())

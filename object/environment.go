@@ -22,3 +22,9 @@ func (e *Environment) Get(name string) (Object, bool) {
 	}
 	return obj, ok
 }
+
+func NewEnclosedEnvironment(enc *Environment) *Environment {
+	env := NewEnvironment()
+	env.enclosing = enc
+	return env
+}

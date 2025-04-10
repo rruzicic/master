@@ -178,6 +178,7 @@ func TestFunctionDefinition(t *testing.T) {
 	fun x(int a, int b) int {
 		int b = b + 1;
 		a = a + 1;
+		return a;
 	}
 	`
 	l := lexer.New(input)
