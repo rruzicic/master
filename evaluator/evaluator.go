@@ -72,6 +72,17 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		env.Set(node.Identifier.Value, function)
 		return function
 	case *ast.IfStatement:
+		condition := Eval(node.Condition, env)
+		if condition.Type() == object.ERROR_OBJ {
+			return condition
+		}
+		if isTrue(condition) {
+			return Eval(node.Body, env)
+		} else {
+			if node.Alternative != nil {
+				return Eval(node.Alternative, env)
+			}
+		}
 	case *ast.ReturnStatement:
 		val := Eval(node.Value, env)
 		if val.Type() == object.ERROR_OBJ {
@@ -85,6 +96,20 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		env.Set(node.Identifier.Value, value)
 	case *ast.WhileStatement:
+		var ret object.Object
+		for {
+			condition := Eval(node.Condition, env)
+			if !isTrue(condition) {
+				break
+			}
+			ret = Eval(&node.Body, env)
+			if ret != nil {
+				if ret.Type() == object.RETURN_VALUE_OBJ || ret.Type() == object.ERROR_OBJ {
+					return ret
+				}
+			}
+		}
+		return ret
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
 	}
@@ -230,4 +255,17 @@ func expandEnv(fn *object.Function, params []object.Object) *object.Environment 
 		env.Set(param.Value, params[i])
 	}
 	return env
+}
+
+func isTrue(condition object.Object) bool {
+	switch condition {
+	case TRUE:
+		return true
+	case NULL:
+		return false
+	case FALSE:
+		return false
+	default:
+		return false
+	}
 }
