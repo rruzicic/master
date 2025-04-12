@@ -40,6 +40,35 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return evalInfixExpression(left, right, node.Operator)
 	case *ast.PrefixExpression:
+		right := Eval(node.Right, env)
+		if right.Type() == object.ERROR_OBJ {
+			return right
+		}
+		switch node.Operator {
+		case "-":
+			switch right.Type() {
+			case object.FLOAT_OBJ:
+				val := right.(*object.Float).Value
+				return &object.Float{Value: -val}
+			case object.INTEGER_OBJ:
+				val := right.(*object.Integer).Value
+				return &object.Integer{Value: -val}
+			default:
+				return &object.Error{Error: fmt.Sprintf("operator - unsuported for %s", right.Type())}
+			}
+		case "!":
+			switch right {
+			case TRUE:
+				return FALSE
+			case FALSE:
+				return TRUE
+			case NULL:
+				return TRUE
+			default:
+				return FALSE
+			}
+		}
+		return &object.Error{Error: "unsupported prefix operator"}
 	case *ast.CallExpression:
 		function := Eval(node.FunctionIdentifer, env)
 		if function.Type() == object.ERROR_OBJ {
