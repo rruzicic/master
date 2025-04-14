@@ -17,6 +17,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.FloatLiteral:
 		return &object.Float{Value: node.Value}
 	case *ast.ArrayLiteral:
+		elements := evalParameters(node.Values, env)
+		if len(elements) == 1 && elements[0].Type() == object.ERROR_OBJ {
+			return elements[0]
+		}
+		return &object.Array{Elements: elements}
 	case *ast.BoolLiteral:
 		return nativeBoolToBooleanObject(node.Value)
 	case *ast.StringLiteral:
@@ -80,7 +85,15 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return evalFunction(function, params)
 	case *ast.IndexExpression:
-		// statements
+		left := Eval(node.Left, env)
+		if left.Type() == object.ERROR_OBJ {
+			return left
+		}
+		index := Eval(node.Index, env)
+		if index.Type() == object.ERROR_OBJ {
+			return index
+		}
+		return evalIndexExpression(left, index)
 	case *ast.BlockStatement:
 		var ret object.Object
 		for _, statement := range node.Statements {
@@ -297,4 +310,20 @@ func isTrue(condition object.Object) bool {
 	default:
 		return false
 	}
+}
+
+func evalIndexExpression(left, index object.Object) object.Object {
+	if left.Type() != object.ARRAY_OBJ {
+		return &object.Error{Error: "index expression must be applied to ARRAY object"}
+	}
+	if index.Type() != object.INTEGER_OBJ {
+		return &object.Error{Error: "index number must be INTEGER"}
+	}
+	arrayObject := left.(*object.Array)
+	idx := index.(*object.Integer).Value
+	max := int64(len(arrayObject.Elements) - 1)
+	if idx < 0 || idx > max {
+		return NULL
+	}
+	return arrayObject.Elements[idx]
 }
