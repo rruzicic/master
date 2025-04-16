@@ -54,7 +54,7 @@ func run(input string, env *object.Environment) {
 		fmt.Println(p.Errors())
 		return
 	}
-	eval := evaluator.Eval(prog.Statements[0], env)
+	eval := evaluator.Eval(prog, env)
 	if eval != nil {
 		fmt.Println(eval.Inspect())
 	}
