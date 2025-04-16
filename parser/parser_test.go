@@ -174,22 +174,28 @@ func TestWhileStatement(t *testing.T) {
 
 // TODO: check return type, parameters, function name
 func TestFunctionDefinition(t *testing.T) {
-	input := `
+
+	inputs := []string{`
 	fun x(int a, int b) int {
 		int b = b + 1;
 		a = a + 1;
 		return a;
 	}
-	`
-	l := lexer.New(input)
-	p := New(l)
-	program := p.ParseProgram()
-	checkParserErrors(t, p)
-	stmt, ok := program.Statements[0].(*ast.FunctionStatement)
-	if !ok {
-		t.Fatalf("exp not *ast.FunctionStatement. got=%T", stmt)
+	`,
+		`
+	fun a() int { return 1; } a();
+	`,
 	}
-
+	for _, input := range inputs {
+		l := lexer.New(input)
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+		stmt, ok := program.Statements[0].(*ast.FunctionStatement)
+		if !ok {
+			t.Fatalf("exp not *ast.FunctionStatement. got=%T", stmt)
+		}
+	}
 }
 
 // TODO: consider merging prefix and infix expression tests

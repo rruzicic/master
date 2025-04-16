@@ -119,18 +119,7 @@ func TestVarEvaluation(t *testing.T) {
 		},
 	}
 	for i, tC := range testCases {
-		l := lexer.New(tC.input)
-		if l.HasError {
-			t.Fatalf("tests[%d]: lexer errors found", i)
-
-		}
-		p := parser.New(l)
-		if len(p.Errors()) != 0 {
-			t.Fatalf("tests[%d]: parse errors found: %s", i, p.Errors())
-		}
-		prog := p.ParseProgram()
-		env := object.NewEnvironment()
-		eval := evaluator.Eval(prog, env)
+		eval := evaluate(t, i, tC.input)
 		if eval.Type() != object.ObjectType(tC.returnType) {
 			t.Fatalf("tests[%d]: expected %s object, got %s", i, object.ObjectType(tC.returnType), eval.Type())
 		}
@@ -138,4 +127,51 @@ func TestVarEvaluation(t *testing.T) {
 			t.Fatalf("tests[%d]: expected %s value, got %s", i, tC.returnValue, eval.Inspect())
 		}
 	}
+}
+
+func TestFunctionEvaluation(t *testing.T) {
+	testCases := []struct {
+		input       string
+		returnType  object.ObjectType
+		returnValue string
+	}{
+		{
+			input:       "fun a(int x, int y) int { return x+y; } a(2,3);",
+			returnType:  object.INTEGER_OBJ,
+			returnValue: "5",
+		},
+		{
+			input:       "fun a(string b) string { return b; } a(\"abc\");",
+			returnType:  object.STRING_OBJ,
+			returnValue: "abc",
+		},
+		{
+			input:       "fun a() int { return 1; } a();",
+			returnType:  object.INTEGER_OBJ,
+			returnValue: "1",
+		},
+	}
+	for i, tC := range testCases {
+		eval := evaluate(t, i, tC.input)
+		if eval.Type() != tC.returnType {
+			t.Fatalf("tests[%d]: expected %s object, got %s", i, object.ObjectType(tC.returnType), eval.Type())
+		}
+		if eval.Inspect() != tC.returnValue {
+			t.Fatalf("tests[%d]: expected %s value, got %s", i, tC.returnValue, eval.Inspect())
+		}
+	}
+}
+
+func evaluate(t *testing.T, testNum int, input string) object.Object {
+	l := lexer.New(input)
+	if l.HasError {
+		t.Fatalf("tests[%d]: lexer errors found", testNum)
+	}
+	p := parser.New(l)
+	if len(p.Errors()) != 0 {
+		t.Fatalf("tests[%d]: parse errors found: %s", testNum, p.Errors())
+	}
+	prog := p.ParseProgram()
+	env := object.NewEnvironment()
+	return evaluator.Eval(prog, env)
 }

@@ -276,6 +276,7 @@ func (p *Parser) parseFunctionDefinition() ast.Statement {
 func (p *Parser) parseFunctionParameterList() []ast.IdentifierExpression {
 	paramList := []ast.IdentifierExpression{}
 	if p.peekToken.Type == token.TOKEN_RPAREN {
+		p.nextToken()
 		return paramList
 	}
 
