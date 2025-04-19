@@ -32,6 +32,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if val, ok := env.Get(node.Value); ok {
 			return val
 		}
+
+		if stdFunc, ok := stdFunc[node.Value]; ok {
+			return stdFunc
+		}
 		return &object.Error{Error: fmt.Sprintf("identifier not found: " + node.Value)}
 	// expressions
 	case *ast.InfixExpression:
@@ -286,6 +290,8 @@ func evalFunction(fn object.Object, params []object.Object) object.Object {
 			return retVal.Value
 		}
 		return ev
+	case *object.StdFunction:
+		return funcc.Fun(params...)
 	default:
 		return &object.Error{Error: "not a func"}
 	}

@@ -24,6 +24,7 @@ const (
 	FUNCTION_OBJ     = "FUNCTION"
 	STRING_OBJ       = "STRING"
 	ARRAY_OBJ        = "ARRAY"
+	STDFUNC_OBJ      = "STDFUNC"
 )
 
 type Integer struct {
@@ -98,3 +99,10 @@ func (ao *Array) Inspect() string {
 	out.WriteString("]")
 	return out.String()
 }
+
+type StdFunction struct {
+	Fun func(args ...Object) Object
+}
+
+func (sf *StdFunction) Type() ObjectType { return STDFUNC_OBJ }
+func (sf *StdFunction) Inspect() string  { return "<std fun>" }
