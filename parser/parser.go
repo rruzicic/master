@@ -249,11 +249,6 @@ func (p *Parser) parseFunctionDefinition() ast.Statement {
 
 	p.nextToken()
 
-	if p.curIsTypeToken() {
-		stmt.ReturnType = p.curToken
-		p.nextToken()
-	}
-
 	if p.curToken.Type != token.TOKEN_LCURLY {
 		p.errors = append(p.errors, fmt.Sprintf("expected {, got %s", p.curToken.Type))
 	}
@@ -273,22 +268,16 @@ func (p *Parser) parseFunctionParameterList() []ast.IdentifierExpression {
 	p.nextToken()
 	ident := ast.IdentifierExpression{
 		Token: p.curToken,
-		Type:  p.curToken,
+		Value: p.curToken.Value,
 	}
-	p.nextToken()
-	ident.Type = p.curToken
-	ident.Value = p.curToken.Value
 	paramList = append(paramList, ident)
 	for p.peekToken.Type == token.TOKEN_COMMA {
 		p.nextToken()
 		p.nextToken()
 		ident := ast.IdentifierExpression{
 			Token: p.curToken,
-			Type:  p.curToken,
+			Value: p.curToken.Value,
 		}
-		p.nextToken()
-		ident.Type = p.curToken
-		ident.Value = p.curToken.Value
 		paramList = append(paramList, ident)
 	}
 

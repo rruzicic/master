@@ -136,17 +136,17 @@ func TestFunctionEvaluation(t *testing.T) {
 		returnValue string
 	}{
 		{
-			input:       "fun a(int x, int y) int { return x+y; } a(2,3);",
+			input:       "fun a(x, y) { return x+y; } a(2,3);",
 			returnType:  object.INTEGER_OBJ,
 			returnValue: "5",
 		},
 		{
-			input:       "fun a(string b) string { return b; } a(\"abc\");",
+			input:       "fun a(b) { return b; } a(\"abc\");",
 			returnType:  object.STRING_OBJ,
 			returnValue: "abc",
 		},
 		{
-			input:       "fun a() int { return 1; } a();",
+			input:       "fun a() { return 1; } a();",
 			returnType:  object.INTEGER_OBJ,
 			returnValue: "1",
 		},

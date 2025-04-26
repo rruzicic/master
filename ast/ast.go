@@ -102,7 +102,6 @@ func (es *ExpressionStatement) String() string {
 type FunctionStatement struct {
 	Token         token.Token // token.TOKEN_FUNCTION
 	Identifier    token.Token
-	ReturnType    token.Token
 	ParameterList []IdentifierExpression
 	Body          *BlockStatement
 }
@@ -123,7 +122,6 @@ func (fs *FunctionStatement) String() string {
 		}
 	}
 	buf.WriteString(") ")
-	buf.WriteString(fs.ReturnType.String())
 	buf.WriteString(fs.Body.String())
 	return buf.String()
 }

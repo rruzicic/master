@@ -176,14 +176,14 @@ func TestWhileStatement(t *testing.T) {
 func TestFunctionDefinition(t *testing.T) {
 
 	inputs := []string{`
-	fun x(int a, int b) int {
+	fun x(a, b) {
 		var b = b + 1;
 		a = a + 1;
 		return a;
 	}
 	`,
 		`
-	fun a() int { return 1; } a();
+	fun a() { return 1; } a();
 	`,
 	}
 	for _, input := range inputs {
