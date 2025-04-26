@@ -18,17 +18,17 @@ func TestTokenize(t *testing.T) {
 
 + - * / ! = 12312312 + - "adasda" asasd
 {
-    int a = 123;
+    var a = 123;
 	if (a == 123) {
-		bool b = false;
+		var b = false;
 	} else if (b == true) {
-		string a = "asdasda";
+		var a = "asdasda";
 	}
-	byte c = 0;
+	var c = 0;
 	for c < a {
 		c = nil;
 	}
-	fun d(string a){return a;}
+	fun d(a) { return a; }
 	c = 561.2;
 }
 	`
@@ -54,7 +54,7 @@ func TestTokenize(t *testing.T) {
 		{token.STRING, "adasda"},
 		{token.IDENTIFIER, "asasd"},
 		{token.TOKEN_LCURLY, ""},
-		{token.TOKEN_INT, ""},
+		{token.TOKEN_VAR, ""},
 		{token.IDENTIFIER, "a"},
 		{token.TOKEN_ASSIGN, ""},
 		{token.NUMBER, "123"},
@@ -66,7 +66,7 @@ func TestTokenize(t *testing.T) {
 		{token.NUMBER, "123"},
 		{token.TOKEN_RPAREN, ""},
 		{token.TOKEN_LCURLY, ""},
-		{token.TOKEN_BOOL, ""},
+		{token.TOKEN_VAR, ""},
 		{token.IDENTIFIER, "b"},
 		{token.TOKEN_ASSIGN, ""},
 		{token.TOKEN_FALSE, "false"},
@@ -80,13 +80,13 @@ func TestTokenize(t *testing.T) {
 		{token.TOKEN_TRUE, "true"},
 		{token.TOKEN_RPAREN, ""},
 		{token.TOKEN_LCURLY, ""},
-		{token.TOKEN_STRING, ""},
+		{token.TOKEN_VAR, ""},
 		{token.IDENTIFIER, "a"},
 		{token.TOKEN_ASSIGN, ""},
 		{token.STRING, "asdasda"},
 		{token.TOKEN_SEMICOLON, ""},
 		{token.TOKEN_RCURLY, ""},
-		{token.TOKEN_BYTE, ""},
+		{token.TOKEN_VAR, ""},
 		{token.IDENTIFIER, "c"},
 		{token.TOKEN_ASSIGN, ""},
 		{token.NUMBER, "0"},
@@ -104,7 +104,6 @@ func TestTokenize(t *testing.T) {
 		{token.TOKEN_FUN, ""},
 		{token.IDENTIFIER, "d"},
 		{token.TOKEN_LPAREN, ""},
-		{token.TOKEN_STRING, ""},
 		{token.IDENTIFIER, "a"},
 		{token.TOKEN_RPAREN, ""},
 		{token.TOKEN_LCURLY, ""},
@@ -158,18 +157,18 @@ func TestWhitespaceCharacters(t *testing.T) {
 
 func TestWhitespaceComment(t *testing.T) {
 	input := `
-	int a = 42;
+	var a = 42;
 	// a is the Ultimate Question of Life, the Universe, and Everything.
-	string b = "// this is NOT a comment";
+	var b = "// this is NOT a comment";
 	`
 	tests := []TestCase{
-		{token.TOKEN_INT, ""},
+		{token.TOKEN_VAR, ""},
 		{token.IDENTIFIER, "a"},
 		{token.TOKEN_ASSIGN, ""},
 		{token.NUMBER, "42"},
 		{token.TOKEN_SEMICOLON, ""},
 		{token.COMMENT, ""},
-		{token.TOKEN_STRING, ""},
+		{token.TOKEN_VAR, ""},
 		{token.IDENTIFIER, "b"},
 		{token.TOKEN_ASSIGN, ""},
 		{token.STRING, "// this is NOT a comment"},
@@ -181,31 +180,31 @@ func TestWhitespaceComment(t *testing.T) {
 
 func TestUnterminatedString(t *testing.T) {
 	input := `
-	string a = "puta";
-	string a = "puta`
+	var a = "puta";
+	var a = "puta`
 	tests := []TestCase{
-		{token.TOKEN_STRING, ""},
+		{token.TOKEN_VAR, ""},
 		{token.IDENTIFIER, "a"},
 		{token.TOKEN_ASSIGN, ""},
 		{token.STRING, "puta"},
 		{token.TOKEN_SEMICOLON, ""},
-		{token.TOKEN_STRING, ""},
+		{token.TOKEN_VAR, ""},
 		{token.IDENTIFIER, "a"},
 		{token.TOKEN_ASSIGN, ""},
-		{token.ERR, "3:17: unterminated string"},
+		{token.ERR, "3:14: unterminated string"},
 	}
 	testLexerOutput(t, input, tests)
 }
 
 func TestUnterminatedStringWithNewlines(t *testing.T) {
 	input := `
-	string a = "puta // not comment
+	var a = "puta // not comment
 	
 	asdasd // not comment
 
 	`
 	tests := []TestCase{
-		{token.TOKEN_STRING, ""},
+		{token.TOKEN_VAR, ""},
 		{token.IDENTIFIER, "a"},
 		{token.TOKEN_ASSIGN, ""},
 		{token.ERR, "6:1: unterminated string"},

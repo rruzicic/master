@@ -99,29 +99,29 @@ func TestInfixExpressionEvaluation(t *testing.T) {
 func TestVarEvaluation(t *testing.T) {
 	testCases := []struct {
 		input       string
-		returnType  string
+		returnType  object.ObjectType
 		returnValue string
 	}{
 		{
-			input:       "int a = 5; a + 1;",
+			input:       "var a = 5; a + 1;",
 			returnType:  object.INTEGER_OBJ,
 			returnValue: "6",
 		},
 		{
-			input:       "int a = 5; int b = 1; a + b;",
+			input:       "var a = 5; var b = 1; a + b;",
 			returnType:  object.INTEGER_OBJ,
 			returnValue: "6",
 		},
 		{
-			input:       "int b = true; true == b;",
+			input:       "var b = true; true == b;",
 			returnType:  object.BOOLEAN_OBJ,
 			returnValue: "true",
 		},
 	}
 	for i, tC := range testCases {
 		eval := evaluate(t, i, tC.input)
-		if eval.Type() != object.ObjectType(tC.returnType) {
-			t.Fatalf("tests[%d]: expected %s object, got %s", i, object.ObjectType(tC.returnType), eval.Type())
+		if eval.Type() != tC.returnType {
+			t.Fatalf("tests[%d]: expected %s object, got %s", i, tC.returnType, eval.Type())
 		}
 		if eval.Inspect() != tC.returnValue {
 			t.Fatalf("tests[%d]: expected %s value, got %s", i, tC.returnValue, eval.Inspect())
@@ -168,10 +168,10 @@ func evaluate(t *testing.T, testNum int, input string) object.Object {
 		t.Fatalf("tests[%d]: lexer errors found", testNum)
 	}
 	p := parser.New(l)
+	prog := p.ParseProgram()
 	if len(p.Errors()) != 0 {
 		t.Fatalf("tests[%d]: parse errors found: %s", testNum, p.Errors())
 	}
-	prog := p.ParseProgram()
 	env := object.NewEnvironment()
 	return evaluator.Eval(prog, env)
 }

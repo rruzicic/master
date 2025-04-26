@@ -37,6 +37,7 @@ const (
 	TOKEN_OR     = "or"
 	TOKEN_TRUE   = "true"
 	TOKEN_FALSE  = "false"
+	TOKEN_VAR    = "var"
 
 	TOKEN_STRING = "string"
 	TOKEN_INT    = "int"
@@ -78,6 +79,7 @@ var keywords = map[string]TokenType{
 	"or":     TOKEN_OR,
 	"true":   TOKEN_TRUE,
 	"false":  TOKEN_FALSE,
+	"var":    TOKEN_VAR,
 }
 
 func LookupIdent(ident string) TokenType {

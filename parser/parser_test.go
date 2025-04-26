@@ -14,12 +14,12 @@ func TestExpressionStatement(t *testing.T) {
 		expectedIdentifier string
 		expectedValue      interface{}
 	}{
-		{"int a = 5;", "a", 5},
-		{"int b = a;", "b", "a"},
-		{"bool x = false;", "x", false},
-		{"float y = 571.1;", "y", 571.1},
-		{"int z = [ 1 , 2 , 3 ];", "z", []int{1, 2, 3}},
-		{"int h = [ 1 ];", "h", []int{1}},
+		{"var a = 5;", "a", 5},
+		{"var b = a;", "b", "a"},
+		{"var x = false;", "x", false},
+		{"var y = 571.1;", "y", 571.1},
+		{"var z = [ 1 , 2 , 3 ];", "z", []int{1, 2, 3}},
+		{"var h = [ 1 ];", "h", []int{1}},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
@@ -42,7 +42,7 @@ func TestExpressionStatement(t *testing.T) {
 
 // TODO: more test cases(spaces, tabs, weird charcters etc)
 func TestStringLiteralExpression(t *testing.T) {
-	input := `string pera = "mira";`
+	input := `var pera = "mira";`
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
@@ -83,9 +83,9 @@ func TestReturnStatement(t *testing.T) {
 func TestIfElseStatement(t *testing.T) {
 	input := `
 	if (pera == 3) {
-		int jova = 5;
+		var jova = 5;
 	} else {
-		int djoka = 8;
+		var djoka = 8;
 	}
 	`
 	l := lexer.New(input)
@@ -105,16 +105,16 @@ func TestIfElseStatement(t *testing.T) {
 		t.Fatalf("number of body statements not 1. got=%d", len(stmt.Body.Statements))
 	}
 
-	if stmt.Body.Statements[0].String() != "int jova = 5;" {
-		t.Fatalf("body statement not 'int jova = 5;'. got='%s'", stmt.Body.Statements[0])
+	if stmt.Body.Statements[0].String() != "var jova = 5;" {
+		t.Fatalf("body statement not 'var jova = 5;'. got='%s'", stmt.Body.Statements[0])
 	}
 
 	if len(stmt.Alternative.Statements) != 1 {
 		t.Fatalf("number of alternative statements not 1. got=%d", len(stmt.Alternative.Statements))
 	}
 
-	if strings.Trim(stmt.Alternative.Statements[0].String(), " \n\t") != "int djoka = 8;" {
-		t.Fatalf("alternative statement not 'int djoka = 8;'. got='%s'", strings.Trim(stmt.Alternative.Statements[0].String(), " \n\t"))
+	if strings.Trim(stmt.Alternative.Statements[0].String(), " \n\t") != "var djoka = 8;" {
+		t.Fatalf("alternative statement not 'var djoka = 8;'. got='%s'", strings.Trim(stmt.Alternative.Statements[0].String(), " \n\t"))
 	}
 }
 
@@ -128,10 +128,10 @@ func TestBlockStatement(t *testing.T) {
 		// TODO: add dedicated test for IndexExpression
 		{`
 		{
-			int a = pera(1);
+			var a = pera(1);
 			pera(1,2,3);
-			int c = djoka(634, 234, 234);
-			int d=a;
+			var c = djoka(634, 234, 234);
+			var d=a;
 		}
 		`, 1},
 	}
@@ -156,7 +156,7 @@ func TestBlockStatement(t *testing.T) {
 func TestWhileStatement(t *testing.T) {
 	input := `
 	while (zika > 3) {
-		int a = a + 1;
+		var a = a + 1;
 		a + 1;
 		b - 5;
 	}
@@ -177,7 +177,7 @@ func TestFunctionDefinition(t *testing.T) {
 
 	inputs := []string{`
 	fun x(int a, int b) int {
-		int b = b + 1;
+		var b = b + 1;
 		a = a + 1;
 		return a;
 	}
@@ -209,7 +209,7 @@ func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 		{"pera(1,2,3);", "(pera(1, 2, 3));"},
 		{"a(1);", "(a(1));"},
 		{"b = 5 + 2 / 3 - 6 * 9 - a(1);", "b = (((5 + (2 / 3)) - (6 * 9)) - (a(1)));"},
-		{"int j = 9123 - a[81] * (12 - 3);", "int j = (9123 - ((a[81]) * (12 - 3)));"},
+		{"var j = 9123 - a[81] * (12 - 3);", "var j = (9123 - ((a[81]) * (12 - 3)));"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
