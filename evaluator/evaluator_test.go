@@ -11,7 +11,7 @@ import (
 func TestInfixExpressionEvaluation(t *testing.T) {
 	testCases := []struct {
 		input       string
-		returnType  string
+		returnType  object.ObjectType
 		returnValue string
 	}{
 		{
@@ -71,28 +71,8 @@ func TestInfixExpressionEvaluation(t *testing.T) {
 		},
 	}
 	for i, tC := range testCases {
-		l := lexer.New(tC.input)
-		if l.HasError {
-			t.Fatalf("tests[%d]: lexer errors found", i)
-
-		}
-		p := parser.New(l)
-		if len(p.Errors()) != 0 {
-			t.Fatalf("tests[%d]: parse errors found: %s", i, p.Errors())
-		}
-		prog := p.ParseProgram()
-		env := object.NewEnvironment()
-		if len(prog.Statements) != 1 {
-			t.Fatalf("tests[%d]: expected 1 statement, got %d", i, len(prog.Statements))
-		}
-		eval := evaluator.Eval(prog.Statements[0], env)
-		if eval.Type() != object.ObjectType(tC.returnType) {
-			t.Fatalf("tests[%d]: expected %s object, got %s", i, object.ObjectType(tC.returnType), eval.Type())
-		}
-		if eval.Inspect() != tC.returnValue {
-			t.Fatalf("tests[%d]: expected %s value, got %s", i, tC.returnValue, eval.Inspect())
-		}
-
+		eval := evaluate(t, i, tC.input)
+		checkTypeAndValue(t, i, eval, tC.returnType, tC.returnValue)
 	}
 }
 
@@ -120,12 +100,7 @@ func TestVarEvaluation(t *testing.T) {
 	}
 	for i, tC := range testCases {
 		eval := evaluate(t, i, tC.input)
-		if eval.Type() != tC.returnType {
-			t.Fatalf("tests[%d]: expected %s object, got %s", i, tC.returnType, eval.Type())
-		}
-		if eval.Inspect() != tC.returnValue {
-			t.Fatalf("tests[%d]: expected %s value, got %s", i, tC.returnValue, eval.Inspect())
-		}
+		checkTypeAndValue(t, i, eval, tC.returnType, tC.returnValue)
 	}
 }
 
@@ -153,12 +128,30 @@ func TestFunctionEvaluation(t *testing.T) {
 	}
 	for i, tC := range testCases {
 		eval := evaluate(t, i, tC.input)
-		if eval.Type() != tC.returnType {
-			t.Fatalf("tests[%d]: expected %s object, got %s", i, object.ObjectType(tC.returnType), eval.Type())
-		}
-		if eval.Inspect() != tC.returnValue {
-			t.Fatalf("tests[%d]: expected %s value, got %s", i, tC.returnValue, eval.Inspect())
-		}
+		checkTypeAndValue(t, i, eval, tC.returnType, tC.returnValue)
+	}
+}
+
+func TestStdFunctions(t *testing.T) {
+	testCases := []struct {
+		input       string
+		returnType  object.ObjectType
+		returnValue string
+	}{
+		{
+			input:       `len("hello");`,
+			returnType:  object.INTEGER_OBJ,
+			returnValue: "5",
+		},
+		{
+			input:       `len(["hello", 1, 5.2]);`,
+			returnType:  object.INTEGER_OBJ,
+			returnValue: "3",
+		},
+	}
+	for i, tC := range testCases {
+		eval := evaluate(t, i, tC.input)
+		checkTypeAndValue(t, i, eval, tC.returnType, tC.returnValue)
 	}
 }
 
@@ -174,4 +167,13 @@ func evaluate(t *testing.T, testNum int, input string) object.Object {
 	}
 	env := object.NewEnvironment()
 	return evaluator.Eval(prog, env)
+}
+
+func checkTypeAndValue(t *testing.T, testNum int, eval object.Object, returnType object.ObjectType, returnValue string) {
+	if eval.Type() != returnType {
+		t.Fatalf("tests[%d]: expected %s object, got %s", testNum, object.ObjectType(returnType), eval.Type())
+	}
+	if eval.Inspect() != returnValue {
+		t.Fatalf("tests[%d]: expected %s value, got %s", testNum, returnValue, eval.Inspect())
+	}
 }

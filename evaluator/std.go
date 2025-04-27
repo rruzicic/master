@@ -18,4 +18,18 @@ var stdFunc = map[string]*object.StdFunction{
 			return nil
 		},
 	},
+	"len": {
+		Fun: func(params ...object.Object) object.Object {
+			switch params[0].Type() {
+			case object.ARRAY_OBJ:
+				arr := params[0].(*object.Array)
+				return &object.Integer{Value: int64(len(arr.Elements))}
+			case object.STRING_OBJ:
+				str := params[0].(*object.String)
+				return &object.Integer{Value: int64(len(str.Value))}
+			default:
+				return &object.Integer{Value: 0}
+			}
+		},
+	},
 }
