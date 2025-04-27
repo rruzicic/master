@@ -69,6 +69,16 @@ func TestInfixExpressionEvaluation(t *testing.T) {
 			returnType:  object.BOOLEAN_OBJ,
 			returnValue: "true",
 		},
+		{
+			input:       "true or false;",
+			returnType:  object.BOOLEAN_OBJ,
+			returnValue: "true",
+		},
+		{
+			input:       "true and false;",
+			returnType:  object.BOOLEAN_OBJ,
+			returnValue: "false",
+		},
 	}
 	for i, tC := range testCases {
 		eval := evaluate(t, i, tC.input)

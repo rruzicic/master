@@ -238,6 +238,21 @@ func evalInfixExpression(left object.Object, right object.Object, operator strin
 		default:
 			return &object.Error{Error: "unknown operator: " + operator}
 		}
+	case left.Type() == object.BOOLEAN_OBJ && right.Type() == object.BOOLEAN_OBJ:
+		l := left.(*object.Boolean)
+		r := right.(*object.Boolean)
+		switch operator {
+		case "and":
+			return nativeBoolToBooleanObject(l.Value && r.Value)
+		case "or":
+			return nativeBoolToBooleanObject(l.Value || r.Value)
+		case "==":
+			return nativeBoolToBooleanObject(l == r)
+		case "!=":
+			return nativeBoolToBooleanObject(l != r)
+		default:
+			return &object.Error{Error: "could not apply " + operator + "to bool literal"}
+		}
 	case operator == "==":
 		return nativeBoolToBooleanObject(left == right)
 	case operator == "!=":

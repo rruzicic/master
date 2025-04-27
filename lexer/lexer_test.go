@@ -15,7 +15,7 @@ func TestTokenize(t *testing.T) {
 >= == <= != = { } (
 
 )
-
+and or
 + - * / ! = 12312312 + - "adasda" asasd
 {
     var a = 123;
@@ -42,6 +42,8 @@ func TestTokenize(t *testing.T) {
 		{token.TOKEN_RCURLY, ""},
 		{token.TOKEN_LPAREN, ""},
 		{token.TOKEN_RPAREN, ""},
+		{token.TOKEN_AND, ""},
+		{token.TOKEN_OR, ""},
 		{token.TOKEN_PLUS, ""},
 		{token.TOKEN_MINUS, ""},
 		{token.TOKEN_MUL, ""},

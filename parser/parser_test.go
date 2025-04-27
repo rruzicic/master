@@ -210,6 +210,7 @@ func TestInfixExpressions(t *testing.T) { // TODO: add more tests
 		{"a(1);", "(a(1));"},
 		{"b = 5 + 2 / 3 - 6 * 9 - a(1);", "b = (((5 + (2 / 3)) - (6 * 9)) - (a(1)));"},
 		{"var j = 9123 - a[81] * (12 - 3);", "var j = (9123 - ((a[81]) * (12 - 3)));"},
+		{"a and b or c;", "((a and b) or c);"},
 	}
 	for _, tt := range tests {
 		l := lexer.New(tt.input)
