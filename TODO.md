@@ -4,12 +4,12 @@ Requirements:
 - [x] If else
 - [x] Functions
 - [x] Basic arithmetic operators (+,-,/,*)
-- [] Basic logical operators (AND,OR,NOT) (maybe XOR)
+- [x] Basic logical operators (AND,OR,NOT) (maybe XOR)
 - [x] Arrays
 - [x] Data types: integer, boolean, string, byte, double, (maybe error)
 - [x] Loops(no need to implement both `for` and `while` loops)
 - [] Preprocessor include statements
-- [] Support for builtin functions(open file, len, )
+- [x] Support for builtin functions(open file, len, )
 - [x] REPL mode and File mode
 - [] Error messages that display the exact location of token when error occurred
 - [x] Unary operators: ++, --, not
@@ -19,7 +19,7 @@ Requirements:
 
 High level requirements:
 
-- [] Dynamic typing system
+- [x] Dynamic typing system
 
 Non functional requirements:
 
