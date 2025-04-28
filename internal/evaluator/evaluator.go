@@ -137,6 +137,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.ReturnValue{Value: val}
 	case *ast.VarStatement:
 		value := Eval(node.Value, env)
+		if value == nil {
+			env.Set(node.Identifier.Value, nil)
+			return nil
+		}
 		if value.Type() == object.ERROR_OBJ {
 			return value
 		}
