@@ -3,10 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"interpreter/evaluator"
-	"interpreter/lexer"
-	"interpreter/object"
-	"interpreter/parser"
+	"interpreter/internal/evaluator"
+	"interpreter/internal/lexer"
+	"interpreter/internal/object"
+	"interpreter/internal/parser"
 	"os"
 )
 

@@ -3,7 +3,7 @@ package lexer
 import (
 	"bytes"
 	"fmt"
-	"interpreter/token"
+	"interpreter/internal/token"
 )
 
 type Lexer struct {

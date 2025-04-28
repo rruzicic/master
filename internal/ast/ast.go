@@ -2,7 +2,7 @@ package ast
 
 import (
 	"bytes"
-	"interpreter/token"
+	"interpreter/internal/token"
 )
 
 type Node interface {

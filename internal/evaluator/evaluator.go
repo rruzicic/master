@@ -2,8 +2,8 @@ package evaluator
 
 import (
 	"fmt"
-	"interpreter/ast"
-	"interpreter/object"
+	"interpreter/internal/ast"
+	"interpreter/internal/object"
 )
 
 func Eval(node ast.Node, env *object.Environment) object.Object {

@@ -3,7 +3,7 @@ package object
 import (
 	"bytes"
 	"fmt"
-	"interpreter/ast"
+	"interpreter/internal/ast"
 	"strings"
 )
 

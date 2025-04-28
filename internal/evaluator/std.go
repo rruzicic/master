@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"interpreter/object"
+	"interpreter/internal/object"
 	"os"
 )
 
