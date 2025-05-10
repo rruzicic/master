@@ -57,7 +57,7 @@ type ReturnValue struct {
 	Value Object
 }
 
-func (rv *ReturnValue) Inspect() string  { return fmt.Sprintf("%v", rv.Value) }
+func (rv *ReturnValue) Inspect() string  { return rv.Value.Inspect() }
 func (rv *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
 
 type Error struct {
@@ -73,7 +73,7 @@ type Function struct {
 	Env    *Environment
 }
 
-func (e *Function) Inspect() string  { return "<fn>" }
+func (e *Function) Inspect() string  { return "<fun>" }
 func (e *Function) Type() ObjectType { return FUNCTION_OBJ }
 
 type String struct {
