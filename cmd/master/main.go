@@ -10,10 +10,16 @@ import (
 	"os"
 )
 
+var version string
+
 func main() {
 	if len(os.Args) == 1 {
 		repl()
 	} else if len(os.Args) == 2 {
+		if os.Args[1] == "version" {
+			fmt.Println("version:", version)
+			return
+		}
 		file(os.Args[1])
 	} else {
 		panic("wrong number of args")
