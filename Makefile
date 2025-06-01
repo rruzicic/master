@@ -16,16 +16,16 @@ tidy:
 
 .PHONY: build
 build:
-	go build -o ${binary_name} ${main_package_path}
+	go build -o $(binary_name) $(main_package_path)
 
 .PHONY: run
 run: build
-	./${binary_name}
+	./$(binary_name)
 
 .PHONY: clean
 clean:
-	rm -f ${binary_name} ${coverage_file_name}
-	rm -rf ${binary_dir}
+	rm -f $(binary_name) $(coverage_file_name)
+	rm -rf $(binary_dir)
 
 .PHONY: test
 test:
@@ -33,12 +33,12 @@ test:
 
 .PHONY: test/cover
 test/cover:
-	go test -v -race -buildvcs -coverprofile=${coverage_file_name} ./...
-	go tool cover -html=${coverage_file_name}
+	go test -v -race -buildvcs -coverprofile=$(coverage_file_name) ./...
+	go tool cover -html=$(coverage_file_name)
 
 .PHONY: release
 release: $(platforms)
 
 .PHONY: $(platforms)
 $(platforms):
-	GOOS=$(os) GOARCH=$(arch) go build -ldflags "$(ldflags)" -o '$(binary_dir)/$(binary_name)-$(os)-$(arch)' $(main_package_path)
+	GOOS=$(os) GOARCH=$(arch) go build -ldflags "$(ldflags)" -o '$(binary_dir)/$(binary_name)-$(version)-$(os)-$(arch)' $(main_package_path)
